@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://Zhangfan94.github.io</id>
     <title>Gridea</title>
-    <updated>2020-10-26T15:38:30.483Z</updated>
+    <updated>2020-10-26T15:49:05.553Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://Zhangfan94.github.io"/>
     <link rel="self" href="https://Zhangfan94.github.io/atom.xml"/>
@@ -10,6 +10,132 @@
     <logo>https://Zhangfan94.github.io/images/avatar.png</logo>
     <icon>https://Zhangfan94.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[使用STM32CubeMX工具配置工程步骤]]></title>
+        <id>https://Zhangfan94.github.io/post/shi-yong-stm32cubemx-gong-ju-pei-zhi-gong-cheng-bu-zou/</id>
+        <link href="https://Zhangfan94.github.io/post/shi-yong-stm32cubemx-gong-ju-pei-zhi-gong-cheng-bu-zou/">
+        </link>
+        <updated>2020-10-26T15:45:35.000Z</updated>
+        <summary type="html"><![CDATA[<p>STM32CubeMX 是 ST 意法半导体近几年来大力推荐的 STM32 芯片图形化配置工具， 允许用户使用图形化向导生成 C 初始化代码，可以大大减轻开发工作，时间和费用。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>STM32CubeMX 是 ST 意法半导体近几年来大力推荐的 STM32 芯片图形化配置工具， 允许用户使用图形化向导生成 C 初始化代码，可以大大减轻开发工作，时间和费用。</p>
+<!-- more -->
+<p><strong>STM32CubeMX有以下几个特点：</strong></p>
+<ol>
+<li>直观的选择 MCU型号，可指定系列、封装、外设数量等条件</li>
+<li>微控制器图形化配置</li>
+<li>自动处理引脚冲突</li>
+<li>动态设置时钟树，生成系统时钟配置代码</li>
+<li>可以动态设置外围和中间件模式和初始化</li>
+<li>功耗预测</li>
+<li>C 代码工程生成器覆盖了 STM32 微控制器初始化编译软件，如 IAR， KEIL， GCC。</li>
+<li>可以独立使用或者作为 Eclipse 插件使用</li>
+</ol>
+<hr>
+<h2 id="一-使用-stm32cubemx-工具配置工程模板">一、使用 STM32CubeMX 工具配置工程模板</h2>
+<p>配置工程的一般步骤为：</p>
+<ol>
+<li>
+<p>工程初步建立和保存</p>
+</li>
+<li>
+<p>RCC 设置</p>
+</li>
+<li>
+<p>时钟系统（时钟树） 配置</p>
+</li>
+<li>
+<p>SYS中配置调试模式（常用SWD）</p>
+</li>
+<li>
+<p>GPIO 功能引脚配置</p>
+</li>
+<li>
+<p>配置Timer</p>
+</li>
+<li>
+<p>生成工程源码</p>
+</li>
+<li>
+<p>编写用户代码</p>
+</li>
+</ol>
+<hr>
+<h2 id="二-详细配置流程以stm32f103c8tx为例">二、详细配置流程（以STM32F103C8Tx为例）</h2>
+<p><strong>接下来我们将按照上面 的步骤，依次教大家使用 STM32CubeMX 工具生成一个完整的工程。</strong></p>
+<p><em><strong>注意：使用STM32CubeMX的时候尽量把自己的代码与自动生成的代码放到不同的文件中，避免在导出的时候不小心覆盖掉，而且这样方便后边自己的改动与移植，相当于业务层直接被剥离出来了，换芯片的时候，你只需要用CubeMX配一下新的工程，然后把自己的业务层复制进去，然后编译，修改报错，测试。</strong></em></p>
+<h4 id="1-工程初步建立和保存">1、工程初步建立和保存</h4>
+<ol>
+<li>工程名必须要配置。</li>
+<li>堆栈配置，一般情况下单片机吧堆区设置为0，栈区根据情况设置，设置的如果太小，会出现奇怪的问题，比如函数调用的异常。</li>
+<li>记得保存一下。</li>
+</ol>
+<figure data-type="image" tabindex="1"><img src="http://image.talk20s.com/blog/project.png" alt="project" loading="lazy"></figure>
+<figure data-type="image" tabindex="2"><img src="http://image.talk20s.com/blog/codegenerator.png" alt="1571643224267" loading="lazy"></figure>
+<h4 id="2-rcc-设置">2、RCC 设置</h4>
+<p><img src="http://image.talk20s.com/blog/RCCsetting.png" alt="" loading="lazy"><br>
+<strong>参数含义</strong></p>
+<ol>
+<li>选项 High Speed Clock（ HSE）用来配置HSE;<br>
+1.1 BYPASS Clock Source 旁路时钟源，直接通过外部提供一个可靠<br>
+的 4-26MHz 时钟作为 HSE。<br>
+1.2 也就是不使用使用晶振/陶瓷振荡器，</li>
+<li>选项 Low Speed Clock（ LSE）用来配置 LSE;</li>
+<li>选项 Master Clock Output 1 用来选择是否使能 MCO1 引脚时钟输出;</li>
+<li>选项 Master Clock Output 2 用来选择是否使能 MCO2 引脚时钟输出;</li>
+<li>选项 Audio Clock Input（ I2S_CKIN）用来选择是否从 I2S_CKIN(PC9)输入I2S时钟;</li>
+</ol>
+<h4 id="3-时钟配置">3、时钟配置</h4>
+<ol>
+<li>时钟源参数设置： HSE 或者 HSI 配置。这里我们选择 HSE 为时钟源，所以我们之前必</li>
+<li>须在 RCC 配置中我们开启 HSE。</li>
+<li>时钟源选择： HSE 还是 HSI。这里我们配置选择器选择 HSE 即可。</li>
+<li>PLL 分频系数 M 配置。</li>
+<li>主 PLL 倍频系数 N 配置。</li>
+<li>主 PLL 分频系数 P 配置。</li>
+<li>系统时钟时钟源选择： PLL,HSI 还是 HSE。 这里毫无疑问，我们选择 PLL，选择器选择PLLCLK 即可。<br>
+<img src="http://image.talk20s.com/blog/systimeconfig.png" alt="" loading="lazy"></li>
+</ol>
+<h4 id="4-sys配置">4、SYS配置</h4>
+<ol>
+<li>
+<p>配置debug模式：选择Trace Asynchronous Sw(SWD模式)</p>
+</li>
+<li>
+<p>如果要使用FreeRtos，HAL库的Timebase Source 不能使用SysTick，因为FreeRtos需要还是用。</p>
+<figure data-type="image" tabindex="3"><img src="http://image.talk20s.com/blog/SYSconfig.png" alt="" loading="lazy"></figure>
+</li>
+</ol>
+<h4 id="5-配置gpio">5、配置GPIO</h4>
+<figure data-type="image" tabindex="4"><img src="http://image.talk20s.com/blog/GPIOconfig.png" alt="" loading="lazy"></figure>
+<h4 id="6-配置timer">6、配置Timer</h4>
+<blockquote>
+<p>T=（TIM_Period+1）*（TIM_Prescaler+1）/TIMxCLK<br>
+其中，TIMxCLK是其时钟频率，若是晶振为8MHz的，一般为72MHz</p>
+</blockquote>
+<ol>
+<li>配置NVIC Interrupt Table</li>
+<li>配置NVIC Setting 打开 global interrupt</li>
+</ol>
+<figure data-type="image" tabindex="5"><img src="http://image.talk20s.com/blog/TimerConfig.png" alt="" loading="lazy"></figure>
+<p>T=（TIM_Period+1）*（TIM_Prescaler+1）/TIMxCLK</p>
+<p>= (100 * 7200 )/7200000  = 0.1s  = 100 ms</p>
+<figure data-type="image" tabindex="6"><img src="http://image.talk20s.com/blog/TimerConfig2.png" alt="" loading="lazy"></figure>
+<h4 id="7-生成工程源码">7、生成工程源码</h4>
+<figure data-type="image" tabindex="7"><img src="http://image.talk20s.com/blog/GenerateCode.png" alt="" loading="lazy"></figure>
+<h4 id="8-iar打开工程">8、IAR打开工程</h4>
+<p>打开工程后做出如下修改：</p>
+<ol>
+<li>因为CubeMX生成的工程默认使用的是STLINK，而且我们开发使用的是J-Liink，所以需要去IAR中配置下。</li>
+</ol>
+<figure data-type="image" tabindex="8"><img src="http://image.talk20s.com/blog/JLinkConfig.png" alt="" loading="lazy"></figure>
+<ol start="2">
+<li>为了调试方便，我们要把编译优化关掉，不然断点不好打，有些地方没法单步调试。</li>
+</ol>
+<figure data-type="image" tabindex="9"><img src="http://image.talk20s.com/blog/Optimizations.png" alt="" loading="lazy"></figure>
+<h4 id="9-编译下载并调试">9、编译下载并调试</h4>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Hello Gridea]]></title>
         <id>https://Zhangfan94.github.io/post/hello-gridea/</id>
