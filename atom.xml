@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://Zhangfan94.github.io</id>
     <title>半生志</title>
-    <updated>2020-10-27T16:11:39.236Z</updated>
+    <updated>2020-10-27T16:20:30.835Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://Zhangfan94.github.io"/>
     <link rel="self" href="https://Zhangfan94.github.io/atom.xml"/>
@@ -10,6 +10,299 @@
     <logo>https://Zhangfan94.github.io/images/avatar.png</logo>
     <icon>https://Zhangfan94.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 半生志</rights>
+    <entry>
+        <title type="html"><![CDATA[Hi3535平台移植e2fsprogs]]></title>
+        <id>https://Zhangfan94.github.io/post/hi3535-ping-tai-yi-zhi-e2fsprogs/</id>
+        <link href="https://Zhangfan94.github.io/post/hi3535-ping-tai-yi-zhi-e2fsprogs/">
+        </link>
+        <updated>2020-10-27T16:19:27.000Z</updated>
+        <summary type="html"><![CDATA[<p>NVR平台因为经常掉电硬重启，长时间使用中会偶尔出现，存储硬盘文件目录损坏，导致一些文件无法读取和删除，影响视频的循环存储。所以希望每次开机之前系统可以自动检测并修复硬盘损坏的文件以及目录。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>NVR平台因为经常掉电硬重启，长时间使用中会偶尔出现，存储硬盘文件目录损坏，导致一些文件无法读取和删除，影响视频的循环存储。所以希望每次开机之前系统可以自动检测并修复硬盘损坏的文件以及目录。</p>
+<!-- more -->
+<h3 id="一-工具">一、工具</h3>
+<ol>
+<li>海思平台的开发环境（SDK）</li>
+<li>e2fsprogs-1.45.4源码（https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git）</li>
+</ol>
+<h3 id="二-编译">二、编译</h3>
+<ol>
+<li>解压e2fsprogs-1.45.4源码</li>
+<li>进入e2fsprogs-1.45.4文件夹根目录并执行以下命令：</li>
+</ol>
+<pre><code>./configure  --host=arm-linux --prefix=$PWD/_install --disable-nls  --disable-defrag CC=/opt/hisi-linux-nptl/arm-hisiv100-linux/target/bin/arm-hisiv100nptl-linux-gcc 
+
+make -j4
+
+make install
+</code></pre>
+<ol start="3">
+<li>文件被安装在 _install 文件夹下，复制到我们的hi3535平台上，就可以使用了。<br>
+<img src="http://image.talk20s.com/blog/20200121194419.png" alt="" loading="lazy"></li>
+<li>为了每次开机可以自动的检查硬盘 在/etc/udev/rules.d/10-usbstorage.rules<br>
+增加：</li>
+</ol>
+<pre><code># mount the specify dir
+ACTION==&quot;add&quot;, SYSFS{removable}==&quot;0&quot;, RUN+=&quot;/sbin/fsck.ext4 -cy /dev/%k&quot;
+ACTION==&quot;add&quot;, SYSFS{removable}==&quot;0&quot;, RUN+=&quot;/bin/mount /dev/%k /home/videos&quot;, GOTO=&quot;media_by_label_auto_mount_end&quot;
+</code></pre>
+<blockquote>
+<p>https://wiki.archlinux.org/index.php/Udev_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)<br>
+https://www.ibm.com/developerworks/cn/linux/l-cn-udev/index.html</p>
+</blockquote>
+<h3 id="四-问题">四、问题</h3>
+<pre><code>1.问题
+e4defrag.c:199: error: #error fallocate64 not available!
+Makefile:460: recipe for target 'e4defrag.o' failed
+
+解决
+加 --disable-defrag 
+http://lists.busybox.net/pipermail/buildroot/2015-July/134916.html
+</code></pre>
+<pre><code>2.问题
+fatal error: libintl.h: No such file or directory
+
+解决
+加 --disable-nls 
+说明
+The --enable-nls option enables Native Language Support (NLS), which lets GCC output diagnostics in languages other than American English. Native Language Support is enabled by default if not doing a canadian cross build. The --disable-nls option disables NLS.
+
+http://flash.uchicago.edu/~jbgallag/configure.html
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Hi3536移植QT5.9.7]]></title>
+        <id>https://Zhangfan94.github.io/post/hi3536-yi-zhi-qt597/</id>
+        <link href="https://Zhangfan94.github.io/post/hi3536-yi-zhi-qt597/">
+        </link>
+        <updated>2020-10-27T16:16:55.000Z</updated>
+        <summary type="html"><![CDATA[<p>QT在嵌入式平台上使用非常广泛，这次将QT5.9.7移植到Hisi3536平台，在此记录下移植过程，方便以后需要的时候回顾。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>QT在嵌入式平台上使用非常广泛，这次将QT5.9.7移植到Hisi3536平台，在此记录下移植过程，方便以后需要的时候回顾。</p>
+<!-- more -->
+<h4 id="搭建交叉编译环境">搭建交叉编译环境</h4>
+<p>这一部分，海思的SDK已经写得很清楚了，只需要根据文档执行相对应的脚本就可以部署好环境。</p>
+<h4 id="修改平台配置目录">修改平台配置目录</h4>
+<pre><code class="language-makefile">cd qt-everywhere-opensource-src-5.9.7/qtbase/mkspecs
+复制linux-arm-gnueabi-g++为linux-hi3536-g++
+cp -ar linux-arm-gnueabi-g++ linux-hi3536-g++
+修改 qmake.conf，配置如下
+
+-------------------------------------------------------
+#
+# qmake configuration for building with arm-linux-g++
+#
+
+MAKEFILE_GENERATOR      = UNIX
+CONFIG                 += incremental
+QMAKE_INCREMENTAL_STYLE = sublib
+
+include(../common/linux.conf)
+include(../common/gcc-base-unix.conf)
+include(../common/g++-unix.conf)
+
+include(../devices/common/linux_device_pre.conf)
+
+DEFINES += EGL_FBDEV
+
+# gpu  注意路径为Hi3536的SDK目录
+QMAKE_INCDIR_EGL += /home/oscar/workspace/Hi3536_SDK_V2.0.6.0/mpp_single/component/gpu/release/include
+QMAKE_LIBDIR_EGL += /home/oscar/workspace/Hi3536_SDK_V2.0.6.0/mpp_single/component/gpu/release/lib
+QMAKE_LIBS_EGL   += -lmali
+QMAKE_INCDIR_OPENGL_ES2 += /home/oscar/workspace/Hi3536_SDK_V2.0.6.0/mpp_single/component/gpu/release/include
+QMAKE_LIBDIR_OPENGL_ES2 += /home/oscar/workspace/Hi3536_SDK_V2.0.6.0/mpp_single/component/gpu/release/lib
+QMAKE_LIBS_OPENGL_ES2 += -lmali
+
+# modifications to g++.conf
+QMAKE_CC                = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-gcc -march=armv7-a -mfloat-abi=softfp -mfpu=neon-vfpv4 -mno-unaligned-access -fno-aggressive-loop-optimizations
+QMAKE_CXX               = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-g++ -march=armv7-a -mfloat-abi=softfp -mfpu=neon-vfpv4 -mno-unaligned-access -fno-aggressive-loop-optimizations
+QMAKE_LINK              = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-g++
+QMAKE_LINK_SHLIB        = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-g++
+
+# modifications to linux.conf
+QMAKE_AR                = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-ar cqs
+QMAKE_OBJCOPY           = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-objcopy
+QMAKE_NM                = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-nm -P
+QMAKE_STRIP             = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-strip
+
+EGLFS_DEVICE_INTEGRATION = eglfs_mali
+
+include(../devices/common/linux_arm_device_post.conf)
+
+load(qt_config) 
+</code></pre>
+<h4 id="配置qt">配置QT</h4>
+<p>说明：<br>
+-prefix: 安装目录<br>
+-xplatform: 平台选择<br>
+-eglfs: 启用eglfs, OpenGL依赖<br>
+-opengl es2: 启用openGL ES 2.0<br>
+-tslib: 启用tslib</p>
+<pre><code class="language-shell">./configure -prefix /opt/qt597_Hi3536 -opensource -confirm-license -release \
+-strip -linuxfb -qt-zlib -no-gif -qt-libpng -qt-libjpeg -qt-freetype \
+-no-rpath -no-pch -no-avx -no-openssl -no-cups -no-dbus -no-pkg-config \
+-xplatform linux-arm-hisiv400-g++ -make libs -eglfs -opengl es2 -no-glib \
+-nomake examples -nomake tools -tslib -qt-sqlite \
+-I/usr/local/arm3536/tslib-1.4/include \
+-L/usr/local/arm3536/tslib-1.4/lib
+
+增加-no-iconv否则运行出错：
+QIconvCodec::convertToUnicode: using Latin-1 for conversion, iconv_open failed
+QIconvCodec::convertFromUnicode: using Latin-1 for conversion, iconv_open failed
+修改如下：
+
+./configure -prefix /opt/qt597_Hi3536 -opensource -confirm-license -release \
+-strip -linuxfb -qt-zlib -no-gif -qt-libpng -qt-libjpeg -qt-freetype \
+-no-iconv -no-rpath -no-pch -no-avx -no-openssl -no-cups -no-dbus -no-pkg-config \
+-xplatform linux-arm-hi3536-g++ -make libs -eglfs -opengl es2 -no-glib \
+-nomake examples -nomake tools -tslib -qt-sqlite \
+-I/usr/local/arm3536/tslib-1.4/include \
+-L/usr/local/arm3536/tslib-1.4/lib
+</code></pre>
+<h4 id="编译">编译</h4>
+<pre><code class="language-shell">make -j4      # -j4: 启用4线程同时编译，提升编译速度
+make install
+</code></pre>
+<h4 id="移植">移植</h4>
+<p>在目标板上/lib目录下创建Qt文件夹<br>
+将安装文件夹下的lib、plugins、和qml拷贝到目标板的/lib/Qt文件夹下<br>
+配置/etc/profile</p>
+<pre><code class="language-shell">#Qt配置
+# 将/lib/Qt/lib添加到目标板的LD_LIBRARY_PATH环境变量中
+LD_LIBRARY_PATH=&quot;/usr/local/lib:/usr/lib:/lib/Qt/lib:/lib/Qt597/lib:/home/app/lib&quot;
+
+#Qt配置
+export QT_ROOT=/lib/Qt
+export QT_QPA_FONTDIR=$QT_ROOT/lib/fonts
+export QT_QPA_PLATFORM=eglfs    // 指定QPA平台
+export QT_QPA_EGLFS_FB=/dev/fb0   //指定QPA的framebuffer
+export QT_QPA_PLATFORM_PLUGIN_PATH=$QT_ROOT/plugins
+export QT_QPA_EGLFS_WIDTH=1280
+export QT_QPA_EGLFS_HEIGHT=720      # 测试验证貌似长宽需为16:9；设置为800时，eglfs创建surface失败0x300b
+export QT_QPA_EGLFS_PHYSICAL_WIDTH=216
+export QT_QPA_EGLFS_PHYSICAL_HEIGHT=135
+export QT_QPA_EGLFS_DEPTH=16
+export QT_QPA_EGLFS_INTEGRATION=eglfs_mali
+export QT_QPA_EGLFS_ALWAYS_SET_MODE=1
+export QT_QPA_GENERIC_PLUGINS=tslib
+export QML_IMPORT_PATH=$QT_ROOT/qml
+export QML2_IMPORT_PATH=$QT_ROOT/qml
+#调试信息开关
+#export QT_QPA_EGLFS_DEBUG=1
+#export QT_LOGGING_RULES=qt.qpa.*=true
+
+export LD_LIBRARY_PATH
+</code></pre>
+<p>改完记得执行source /etc/profile来生效</p>
+<h4 id="配置hisi平台">配置Hisi平台</h4>
+<blockquote>
+<ol>
+<li>按照《HIFB开发指南.pdf》 说明加载hifb.ko驱动，这里需要说明的是，如果QT程序运行在fb0上，分辨率为1920<em>1080，颜色格式为ARGB8888，1buffer模式下，则需要vram0_size = 1920</em>1080<em>4=8100K<br>
+如果为2 buffer模式下则需要vram0_size=1920</em>1080<em>4</em>2=16200K<br>
+说明：为什么要使用ARGB8888而不用ARGB1555，是因为我们QT编译使用的是32位framebuffer。不然的话会做不了透明处理。</li>
+<li>使能fb0，前提是VO设备已初始化完毕</li>
+</ol>
+</blockquote>
+<h4 id="遇见的错误">遇见的错误：</h4>
+<blockquote>
+<p>1、bash: /opt/hisi-linux/x86-arm/arm-hisiv300-linux/target/bin/arm-hisiv300-linux-gcc: 没有那个文件或目录。<br>
+解决：<br>
+这是因为宿主机是64 位 而交叉编译器是针对32位的开发板制作的。所以要安装对应的32位库。<br>
+我的linux宿主机是ubuntu 16.04 64位。<br>
+安装命令：<br>
+sudo apt install lib32z1-dev</p>
+<p>2、demo程序运行时出现错误提示</p>
+<pre><code class="language-shell">QIconvCodec::convertToUnicode: using Latin-1 for conversion,iconv_open failed
+QIconvCodec::convertFromUnicode: using Latin-1 for conversion,iconv_open failed
+</code></pre>
+<p>解决：<br>
+./configure 后添加编译 -no-iconv</p>
+</blockquote>
+<p>3、报错module &quot;***&quot; is not installed</p>
+<blockquote>
+<pre><code class="language-shell">QQmlApplicationEngine failed to load component
+qrc:/main.qml:1 module &quot;QtQuick&quot; is not installed
+qrc:/main.qml:2 module &quot;QtQuick.Window&quot; is not installed
+qrc:/main.qml:1 module &quot;QtQuick&quot; is not installed
+qrc:/main.qml:2 module &quot;QtQuick.Window&quot; is not installed
+</code></pre>
+<p>在/etc/profile文件中加入</p>
+<pre><code class="language-shell">export QML_IMPORT_PATH=$QT_ROOT/qml
+export QML2_IMPORT_PATH=$QT_ROOT/qml
+</code></pre>
+</blockquote>
+<p>4、字库找不到</p>
+<blockquote>
+<p>报错如下：</p>
+<pre><code class="language-shell">Note that Qt no longer ships fonts. Deploy some (from http://dejavu-fonts.org for example) or switch to fontconfig.
+QFontDatabase: Cannot find font directory /lib/Qt/lib/fonts.
+
+</code></pre>
+<p>解决：说的比较清楚了，就是没找到/lib/Qt/lib/fonts，把fonts放到下面就好。</p>
+</blockquote>
+<p>5、没有加在GPU相关KO</p>
+<blockquote>
+<p>报错：</p>
+<pre><code class="language-shell">ERROR: The DDK is not compatible with any of the Mali GPUs on the system.
+The DDK was built for 0x720 r1p1 status range [0..15], but none of the GPUs matched:
+Could not initialize egl display
+Aborted
+</code></pre>
+<p>解决：《GPU 开发用户指南.pdf》加载相关驱动</p>
+<pre><code class="language-shell">/home/app/komod/ko # ls
+hi_dbe.ko      kds.ko         loadgpu        mali_kbase.ko
+/home/app/komod/ko # ./loadgpu  -i
+</code></pre>
+</blockquote>
+<p>6、/dev/fb0 打开失败问题</p>
+<blockquote>
+<p>报错：</p>
+<pre><code>EGLFS: Failed to open /dev/fb0
+EGLFS: Can't continue without a display
+</code></pre>
+<p>解决：<br>
+由于海思在操作Framebuffer需要进行相应的配置，如果没有进行相应的配置，那么去打开/dev/fb0是会报错的。<br>
+具体进行了如下两个操作步骤：<br>
+(1)、初始化MPP<br>
+(2)、使能输出设备VO<br>
+经过了以上两个步骤以后，打开/dev/fb0才不会出错</p>
+</blockquote>
+<p>7、QT_QPA_EGLFS_PHYSICAL_WIDTH and QT_QPA_EGLFS_PHYSICAL_HEIGHT</p>
+<blockquote>
+<p>报错：</p>
+<pre><code class="language-shell">Unable to query physical screen size, defaulting to 100 dpi.
+To override, set QT_QPA_EGLFS_PHYSICAL_WIDTH and QT_QPA_EGLFS_PHYSICAL_HEIGHT (in millimeters).
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+qml: background.x:0background.y:0
+qml: background.width:1280background.height:800
+</code></pre>
+<p>解决：<br>
+设置profile文件中的QT_QPA_EGLFS_PHYSICAL_WIDTH and QT_QPA_EGLFS_PHYSICAL_HEIGHT，液晶面板显示区域长宽（mm），液晶说明书查。</p>
+</blockquote>
+<p>8、嵌入式linux下使用qt virtualkeyboard崩溃<br>
+报错：</p>
+<pre><code class="language-shell">qml: background.width:1280background.height:800
+EGLFS: OpenGL windows cannot be mixed with others.
+Aborted
+</code></pre>
+<p>解决：</p>
+<h4 id="其它问题">其它问题：</h4>
+<p>1、 虚拟机无法上网了<br>
+linux手动配置网卡：</p>
+<pre><code class="language-shell">auto eth0
+#iface eth0 inet dhcp
+iface eth0 inet static
+address 192.168.1.87
+netmask 255.255.255.0
+gateway 192.168.1.1
+dns-nameservers 223.5.5.5
+auto eth0 #开机自动连接
+iface eth0 inet static #static表示使用固定ip，dhcp表示使用动态ip
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[使用STM32CubeMX工具配置工程步骤]]></title>
         <id>https://Zhangfan94.github.io/post/shi-yong-stm32cubemx-gong-ju-pei-zhi-gong-cheng-bu-zou/</id>
@@ -31,7 +324,6 @@
 <li>C 代码工程生成器覆盖了 STM32 微控制器初始化编译软件，如 IAR， KEIL， GCC。</li>
 <li>可以独立使用或者作为 Eclipse 插件使用</li>
 </ol>
-<hr>
 <h2 id="一-使用-stm32cubemx-工具配置工程模板">一、使用 STM32CubeMX 工具配置工程模板</h2>
 <p>配置工程的一般步骤为：</p>
 <ol>
@@ -60,7 +352,6 @@
 <p>编写用户代码</p>
 </li>
 </ol>
-<hr>
 <h2 id="二-详细配置流程以stm32f103c8tx为例">二、详细配置流程（以STM32F103C8Tx为例）</h2>
 <p><strong>接下来我们将按照上面 的步骤，依次教大家使用 STM32CubeMX 工具生成一个完整的工程。</strong></p>
 <p><em><strong>注意：使用STM32CubeMX的时候尽量把自己的代码与自动生成的代码放到不同的文件中，避免在导出的时候不小心覆盖掉，而且这样方便后边自己的改动与移植，相当于业务层直接被剥离出来了，换芯片的时候，你只需要用CubeMX配一下新的工程，然后把自己的业务层复制进去，然后编译，修改报错，测试。</strong></em></p>

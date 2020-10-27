@@ -9,7 +9,7 @@
 <meta name="description" content="温故而知新">
 <meta name="theme-color" content="#000">
 <title>使用STM32CubeMX工具配置工程步骤 | 半生志</title>
-<link rel="shortcut icon" href="/favicon.ico?v=1603815095437">
+<link rel="shortcut icon" href="/favicon.ico?v=1603815605793">
 <link rel="stylesheet" href="/media/css/pisces.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
 <link
@@ -197,7 +197,7 @@
     <div class="sidebar-item-box">
       <a href="/archives/">
         
-        <span class="site-item-stat-count">1</span>
+        <span class="site-item-stat-count">3</span>
         <span class="site-item-stat-name language" data-lan="article">文章</span>
       </a>
     </div>
@@ -578,7 +578,6 @@
 <li>C 代码工程生成器覆盖了 STM32 微控制器初始化编译软件，如 IAR， KEIL， GCC。</li>
 <li>可以独立使用或者作为 Eclipse 插件使用</li>
 </ol>
-<hr>
 <h2 id="一-使用-stm32cubemx-工具配置工程模板">一、使用 STM32CubeMX 工具配置工程模板</h2>
 <p>配置工程的一般步骤为：</p>
 <ol>
@@ -607,7 +606,6 @@
 <p>编写用户代码</p>
 </li>
 </ol>
-<hr>
 <h2 id="二-详细配置流程以stm32f103c8tx为例">二、详细配置流程（以STM32F103C8Tx为例）</h2>
 <p><strong>接下来我们将按照上面 的步骤，依次教大家使用 STM32CubeMX 工具生成一个完整的工程。</strong></p>
 <p><em><strong>注意：使用STM32CubeMX的时候尽量把自己的代码与自动生成的代码放到不同的文件中，避免在导出的时候不小心覆盖掉，而且这样方便后边自己的改动与移植，相当于业务层直接被剥离出来了，换芯片的时候，你只需要用CubeMX配一下新的工程，然后把自己的业务层复制进去，然后编译，修改报错，测试。</strong></em></p>
@@ -705,6 +703,10 @@
   </div>
   <div class="nav">
     <div class="nav-prev">
+      
+        <i class="fa fa-chevron-left"></i>
+        <a class="nav-pc-next" title="Hi3536移植QT5.9.7" href="https://Zhangfan94.github.io/post/hi3536-yi-zhi-qt597/">Hi3536移植QT5.9.7</a class="nav-pc-next">
+        <a class="nav-mobile-prev" title="Hi3536移植QT5.9.7" href="https://Zhangfan94.github.io/post/hi3536-yi-zhi-qt597/">上一篇</a>
       
     </div>
     <div class="nav-next">
@@ -1730,6 +1732,289 @@
     <div class="result" id="result">
       
       <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://Zhangfan94.github.io/post/hi3535-ping-tai-yi-zhi-e2fsprogs/"" data-c="
+          &lt;p&gt;NVR平台因为经常掉电硬重启，长时间使用中会偶尔出现，存储硬盘文件目录损坏，导致一些文件无法读取和删除，影响视频的循环存储。所以希望每次开机之前系统可以自动检测并修复硬盘损坏的文件以及目录。&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h3 id=&#34;一-工具&#34;&gt;一、工具&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;海思平台的开发环境（SDK）&lt;/li&gt;
+&lt;li&gt;e2fsprogs-1.45.4源码（https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;二-编译&#34;&gt;二、编译&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;解压e2fsprogs-1.45.4源码&lt;/li&gt;
+&lt;li&gt;进入e2fsprogs-1.45.4文件夹根目录并执行以下命令：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;./configure  --host=arm-linux --prefix=$PWD/_install --disable-nls  --disable-defrag CC=/opt/hisi-linux-nptl/arm-hisiv100-linux/target/bin/arm-hisiv100nptl-linux-gcc 
+
+make -j4
+
+make install
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;文件被安装在 _install 文件夹下，复制到我们的hi3535平台上，就可以使用了。&lt;br&gt;
+&lt;img src=&#34;http://image.talk20s.com/blog/20200121194419.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/li&gt;
+&lt;li&gt;为了每次开机可以自动的检查硬盘 在/etc/udev/rules.d/10-usbstorage.rules&lt;br&gt;
+增加：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;# mount the specify dir
+ACTION==&amp;quot;add&amp;quot;, SYSFS{removable}==&amp;quot;0&amp;quot;, RUN+=&amp;quot;/sbin/fsck.ext4 -cy /dev/%k&amp;quot;
+ACTION==&amp;quot;add&amp;quot;, SYSFS{removable}==&amp;quot;0&amp;quot;, RUN+=&amp;quot;/bin/mount /dev/%k /home/videos&amp;quot;, GOTO=&amp;quot;media_by_label_auto_mount_end&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;https://wiki.archlinux.org/index.php/Udev_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)&lt;br&gt;
+https://www.ibm.com/developerworks/cn/linux/l-cn-udev/index.html&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;四-问题&#34;&gt;四、问题&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;1.问题
+e4defrag.c:199: error: #error fallocate64 not available!
+Makefile:460: recipe for target &#39;e4defrag.o&#39; failed
+
+解决
+加 --disable-defrag 
+http://lists.busybox.net/pipermail/buildroot/2015-July/134916.html
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;2.问题
+fatal error: libintl.h: No such file or directory
+
+解决
+加 --disable-nls 
+说明
+The --enable-nls option enables Native Language Support (NLS), which lets GCC output diagnostics in languages other than American English. Native Language Support is enabled by default if not doing a canadian cross build. The --disable-nls option disables NLS.
+
+http://flash.uchicago.edu/~jbgallag/configure.html
+&lt;/code&gt;&lt;/pre&gt;
+">Hi3535平台移植e2fsprogs</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://Zhangfan94.github.io/post/hi3536-yi-zhi-qt597/"" data-c="
+          &lt;p&gt;QT在嵌入式平台上使用非常广泛，这次将QT5.9.7移植到Hisi3536平台，在此记录下移植过程，方便以后需要的时候回顾。&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h4 id=&#34;搭建交叉编译环境&#34;&gt;搭建交叉编译环境&lt;/h4&gt;
+&lt;p&gt;这一部分，海思的SDK已经写得很清楚了，只需要根据文档执行相对应的脚本就可以部署好环境。&lt;/p&gt;
+&lt;h4 id=&#34;修改平台配置目录&#34;&gt;修改平台配置目录&lt;/h4&gt;
+&lt;pre&gt;&lt;code class=&#34;language-makefile&#34;&gt;cd qt-everywhere-opensource-src-5.9.7/qtbase/mkspecs
+复制linux-arm-gnueabi-g++为linux-hi3536-g++
+cp -ar linux-arm-gnueabi-g++ linux-hi3536-g++
+修改 qmake.conf，配置如下
+
+-------------------------------------------------------
+#
+# qmake configuration for building with arm-linux-g++
+#
+
+MAKEFILE_GENERATOR      = UNIX
+CONFIG                 += incremental
+QMAKE_INCREMENTAL_STYLE = sublib
+
+include(../common/linux.conf)
+include(../common/gcc-base-unix.conf)
+include(../common/g++-unix.conf)
+
+include(../devices/common/linux_device_pre.conf)
+
+DEFINES += EGL_FBDEV
+
+# gpu  注意路径为Hi3536的SDK目录
+QMAKE_INCDIR_EGL += /home/oscar/workspace/Hi3536_SDK_V2.0.6.0/mpp_single/component/gpu/release/include
+QMAKE_LIBDIR_EGL += /home/oscar/workspace/Hi3536_SDK_V2.0.6.0/mpp_single/component/gpu/release/lib
+QMAKE_LIBS_EGL   += -lmali
+QMAKE_INCDIR_OPENGL_ES2 += /home/oscar/workspace/Hi3536_SDK_V2.0.6.0/mpp_single/component/gpu/release/include
+QMAKE_LIBDIR_OPENGL_ES2 += /home/oscar/workspace/Hi3536_SDK_V2.0.6.0/mpp_single/component/gpu/release/lib
+QMAKE_LIBS_OPENGL_ES2 += -lmali
+
+# modifications to g++.conf
+QMAKE_CC                = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-gcc -march=armv7-a -mfloat-abi=softfp -mfpu=neon-vfpv4 -mno-unaligned-access -fno-aggressive-loop-optimizations
+QMAKE_CXX               = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-g++ -march=armv7-a -mfloat-abi=softfp -mfpu=neon-vfpv4 -mno-unaligned-access -fno-aggressive-loop-optimizations
+QMAKE_LINK              = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-g++
+QMAKE_LINK_SHLIB        = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-g++
+
+# modifications to linux.conf
+QMAKE_AR                = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-ar cqs
+QMAKE_OBJCOPY           = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-objcopy
+QMAKE_NM                = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-nm -P
+QMAKE_STRIP             = /opt/hisi-linux/x86-arm/arm-hisiv400-linux/target/bin/arm-hisiv400-linux-strip
+
+EGLFS_DEVICE_INTEGRATION = eglfs_mali
+
+include(../devices/common/linux_arm_device_post.conf)
+
+load(qt_config) 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4 id=&#34;配置qt&#34;&gt;配置QT&lt;/h4&gt;
+&lt;p&gt;说明：&lt;br&gt;
+-prefix: 安装目录&lt;br&gt;
+-xplatform: 平台选择&lt;br&gt;
+-eglfs: 启用eglfs, OpenGL依赖&lt;br&gt;
+-opengl es2: 启用openGL ES 2.0&lt;br&gt;
+-tslib: 启用tslib&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;./configure -prefix /opt/qt597_Hi3536 -opensource -confirm-license -release \
+-strip -linuxfb -qt-zlib -no-gif -qt-libpng -qt-libjpeg -qt-freetype \
+-no-rpath -no-pch -no-avx -no-openssl -no-cups -no-dbus -no-pkg-config \
+-xplatform linux-arm-hisiv400-g++ -make libs -eglfs -opengl es2 -no-glib \
+-nomake examples -nomake tools -tslib -qt-sqlite \
+-I/usr/local/arm3536/tslib-1.4/include \
+-L/usr/local/arm3536/tslib-1.4/lib
+
+增加-no-iconv否则运行出错：
+QIconvCodec::convertToUnicode: using Latin-1 for conversion, iconv_open failed
+QIconvCodec::convertFromUnicode: using Latin-1 for conversion, iconv_open failed
+修改如下：
+
+./configure -prefix /opt/qt597_Hi3536 -opensource -confirm-license -release \
+-strip -linuxfb -qt-zlib -no-gif -qt-libpng -qt-libjpeg -qt-freetype \
+-no-iconv -no-rpath -no-pch -no-avx -no-openssl -no-cups -no-dbus -no-pkg-config \
+-xplatform linux-arm-hi3536-g++ -make libs -eglfs -opengl es2 -no-glib \
+-nomake examples -nomake tools -tslib -qt-sqlite \
+-I/usr/local/arm3536/tslib-1.4/include \
+-L/usr/local/arm3536/tslib-1.4/lib
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4 id=&#34;编译&#34;&gt;编译&lt;/h4&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;make -j4      # -j4: 启用4线程同时编译，提升编译速度
+make install
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4 id=&#34;移植&#34;&gt;移植&lt;/h4&gt;
+&lt;p&gt;在目标板上/lib目录下创建Qt文件夹&lt;br&gt;
+将安装文件夹下的lib、plugins、和qml拷贝到目标板的/lib/Qt文件夹下&lt;br&gt;
+配置/etc/profile&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;#Qt配置
+# 将/lib/Qt/lib添加到目标板的LD_LIBRARY_PATH环境变量中
+LD_LIBRARY_PATH=&amp;quot;/usr/local/lib:/usr/lib:/lib/Qt/lib:/lib/Qt597/lib:/home/app/lib&amp;quot;
+
+#Qt配置
+export QT_ROOT=/lib/Qt
+export QT_QPA_FONTDIR=$QT_ROOT/lib/fonts
+export QT_QPA_PLATFORM=eglfs    // 指定QPA平台
+export QT_QPA_EGLFS_FB=/dev/fb0   //指定QPA的framebuffer
+export QT_QPA_PLATFORM_PLUGIN_PATH=$QT_ROOT/plugins
+export QT_QPA_EGLFS_WIDTH=1280
+export QT_QPA_EGLFS_HEIGHT=720      # 测试验证貌似长宽需为16:9；设置为800时，eglfs创建surface失败0x300b
+export QT_QPA_EGLFS_PHYSICAL_WIDTH=216
+export QT_QPA_EGLFS_PHYSICAL_HEIGHT=135
+export QT_QPA_EGLFS_DEPTH=16
+export QT_QPA_EGLFS_INTEGRATION=eglfs_mali
+export QT_QPA_EGLFS_ALWAYS_SET_MODE=1
+export QT_QPA_GENERIC_PLUGINS=tslib
+export QML_IMPORT_PATH=$QT_ROOT/qml
+export QML2_IMPORT_PATH=$QT_ROOT/qml
+#调试信息开关
+#export QT_QPA_EGLFS_DEBUG=1
+#export QT_LOGGING_RULES=qt.qpa.*=true
+
+export LD_LIBRARY_PATH
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;改完记得执行source /etc/profile来生效&lt;/p&gt;
+&lt;h4 id=&#34;配置hisi平台&#34;&gt;配置Hisi平台&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;按照《HIFB开发指南.pdf》 说明加载hifb.ko驱动，这里需要说明的是，如果QT程序运行在fb0上，分辨率为1920&lt;em&gt;1080，颜色格式为ARGB8888，1buffer模式下，则需要vram0_size = 1920&lt;/em&gt;1080&lt;em&gt;4=8100K&lt;br&gt;
+如果为2 buffer模式下则需要vram0_size=1920&lt;/em&gt;1080&lt;em&gt;4&lt;/em&gt;2=16200K&lt;br&gt;
+说明：为什么要使用ARGB8888而不用ARGB1555，是因为我们QT编译使用的是32位framebuffer。不然的话会做不了透明处理。&lt;/li&gt;
+&lt;li&gt;使能fb0，前提是VO设备已初始化完毕&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+&lt;h4 id=&#34;遇见的错误&#34;&gt;遇见的错误：&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;1、bash: /opt/hisi-linux/x86-arm/arm-hisiv300-linux/target/bin/arm-hisiv300-linux-gcc: 没有那个文件或目录。&lt;br&gt;
+解决：&lt;br&gt;
+这是因为宿主机是64 位 而交叉编译器是针对32位的开发板制作的。所以要安装对应的32位库。&lt;br&gt;
+我的linux宿主机是ubuntu 16.04 64位。&lt;br&gt;
+安装命令：&lt;br&gt;
+sudo apt install lib32z1-dev&lt;/p&gt;
+&lt;p&gt;2、demo程序运行时出现错误提示&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;QIconvCodec::convertToUnicode: using Latin-1 for conversion,iconv_open failed
+QIconvCodec::convertFromUnicode: using Latin-1 for conversion,iconv_open failed
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;解决：&lt;br&gt;
+./configure 后添加编译 -no-iconv&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;3、报错module &amp;quot;***&amp;quot; is not installed&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;QQmlApplicationEngine failed to load component
+qrc:/main.qml:1 module &amp;quot;QtQuick&amp;quot; is not installed
+qrc:/main.qml:2 module &amp;quot;QtQuick.Window&amp;quot; is not installed
+qrc:/main.qml:1 module &amp;quot;QtQuick&amp;quot; is not installed
+qrc:/main.qml:2 module &amp;quot;QtQuick.Window&amp;quot; is not installed
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;在/etc/profile文件中加入&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;export QML_IMPORT_PATH=$QT_ROOT/qml
+export QML2_IMPORT_PATH=$QT_ROOT/qml
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;4、字库找不到&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;报错如下：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;Note that Qt no longer ships fonts. Deploy some (from http://dejavu-fonts.org for example) or switch to fontconfig.
+QFontDatabase: Cannot find font directory /lib/Qt/lib/fonts.
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;解决：说的比较清楚了，就是没找到/lib/Qt/lib/fonts，把fonts放到下面就好。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;5、没有加在GPU相关KO&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;报错：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;ERROR: The DDK is not compatible with any of the Mali GPUs on the system.
+The DDK was built for 0x720 r1p1 status range [0..15], but none of the GPUs matched:
+Could not initialize egl display
+Aborted
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;解决：《GPU 开发用户指南.pdf》加载相关驱动&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;/home/app/komod/ko # ls
+hi_dbe.ko      kds.ko         loadgpu        mali_kbase.ko
+/home/app/komod/ko # ./loadgpu  -i
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;6、/dev/fb0 打开失败问题&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;报错：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;EGLFS: Failed to open /dev/fb0
+EGLFS: Can&#39;t continue without a display
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;解决：&lt;br&gt;
+由于海思在操作Framebuffer需要进行相应的配置，如果没有进行相应的配置，那么去打开/dev/fb0是会报错的。&lt;br&gt;
+具体进行了如下两个操作步骤：&lt;br&gt;
+(1)、初始化MPP&lt;br&gt;
+(2)、使能输出设备VO&lt;br&gt;
+经过了以上两个步骤以后，打开/dev/fb0才不会出错&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;7、QT_QPA_EGLFS_PHYSICAL_WIDTH and QT_QPA_EGLFS_PHYSICAL_HEIGHT&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;报错：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;Unable to query physical screen size, defaulting to 100 dpi.
+To override, set QT_QPA_EGLFS_PHYSICAL_WIDTH and QT_QPA_EGLFS_PHYSICAL_HEIGHT (in millimeters).
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+qml: background.x:0background.y:0
+qml: background.width:1280background.height:800
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;解决：&lt;br&gt;
+设置profile文件中的QT_QPA_EGLFS_PHYSICAL_WIDTH and QT_QPA_EGLFS_PHYSICAL_HEIGHT，液晶面板显示区域长宽（mm），液晶说明书查。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;8、嵌入式linux下使用qt virtualkeyboard崩溃&lt;br&gt;
+报错：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;qml: background.width:1280background.height:800
+EGLFS: OpenGL windows cannot be mixed with others.
+Aborted
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;解决：&lt;/p&gt;
+&lt;h4 id=&#34;其它问题&#34;&gt;其它问题：&lt;/h4&gt;
+&lt;p&gt;1、 虚拟机无法上网了&lt;br&gt;
+linux手动配置网卡：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-shell&#34;&gt;auto eth0
+#iface eth0 inet dhcp
+iface eth0 inet static
+address 192.168.1.87
+netmask 255.255.255.0
+gateway 192.168.1.1
+dns-nameservers 223.5.5.5
+auto eth0 #开机自动连接
+iface eth0 inet static #static表示使用固定ip，dhcp表示使用动态ip
+&lt;/code&gt;&lt;/pre&gt;
+">Hi3536移植QT5.9.7</a>
+      </div>
+      
+      <div class="item">
         <a class="result-title" style="opacity: 0;" href="https://Zhangfan94.github.io/post/shi-yong-stm32cubemx-gong-ju-pei-zhi-gong-cheng-bu-zou/"" data-c="
           &lt;p&gt;STM32CubeMX 是 ST 意法半导体近几年来大力推荐的 STM32 芯片图形化配置工具， 允许用户使用图形化向导生成 C 初始化代码，可以大大减轻开发工作，时间和费用。&lt;/p&gt;
 &lt;!-- more --&gt;
@@ -1744,7 +2029,6 @@
 &lt;li&gt;C 代码工程生成器覆盖了 STM32 微控制器初始化编译软件，如 IAR， KEIL， GCC。&lt;/li&gt;
 &lt;li&gt;可以独立使用或者作为 Eclipse 插件使用&lt;/li&gt;
 &lt;/ol&gt;
-&lt;hr&gt;
 &lt;h2 id=&#34;一-使用-stm32cubemx-工具配置工程模板&#34;&gt;一、使用 STM32CubeMX 工具配置工程模板&lt;/h2&gt;
 &lt;p&gt;配置工程的一般步骤为：&lt;/p&gt;
 &lt;ol&gt;
@@ -1773,7 +2057,6 @@
 &lt;p&gt;编写用户代码&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;hr&gt;
 &lt;h2 id=&#34;二-详细配置流程以stm32f103c8tx为例&#34;&gt;二、详细配置流程（以STM32F103C8Tx为例）&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;接下来我们将按照上面 的步骤，依次教大家使用 STM32CubeMX 工具生成一个完整的工程。&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;&lt;strong&gt;注意：使用STM32CubeMX的时候尽量把自己的代码与自动生成的代码放到不同的文件中，避免在导出的时候不小心覆盖掉，而且这样方便后边自己的改动与移植，相当于业务层直接被剥离出来了，换芯片的时候，你只需要用CubeMX配一下新的工程，然后把自己的业务层复制进去，然后编译，修改报错，测试。&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
@@ -1852,7 +2135,9 @@
       
       <div class="item">
         <a class="result-title" style="opacity: 0;" href="https://Zhangfan94.github.io/post/about/"" data-c="
-          &lt;pre&gt;&lt;code&gt;                                          欢迎来到我的小站呀，很高兴遇见你！🤝&lt;/code&gt;&lt;/pre&gt;
+          &lt;blockquote&gt;
+&lt;p&gt;欢迎来到我的小站呀，很高兴遇见你！🤝&lt;/p&gt;
+&lt;/blockquote&gt;
 ">关于</a>
       </div>
       
