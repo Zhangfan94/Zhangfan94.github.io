@@ -2,14 +2,14 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://Zhangfan94.github.io</id>
     <title>半生志</title>
-    <updated>2020-10-27T16:34:05.227Z</updated>
+    <updated>2021-01-14T16:46:52.419Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://Zhangfan94.github.io"/>
     <link rel="self" href="https://Zhangfan94.github.io/atom.xml"/>
     <subtitle>温故而知新</subtitle>
     <logo>https://Zhangfan94.github.io/images/avatar.png</logo>
     <icon>https://Zhangfan94.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2020, 半生志</rights>
+    <rights>All rights reserved 2021, 半生志</rights>
     <entry>
         <title type="html"><![CDATA[Hi3535平台移植e2fsprogs]]></title>
         <id>https://Zhangfan94.github.io/post/hi3535-ping-tai-yi-zhi-e2fsprogs/</id>
@@ -50,7 +50,7 @@ ACTION==&quot;add&quot;, SYSFS{removable}==&quot;0&quot;, RUN+=&quot;/bin/mount 
 <p>https://wiki.archlinux.org/index.php/Udev_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)<br>
 https://www.ibm.com/developerworks/cn/linux/l-cn-udev/index.html</p>
 </blockquote>
-<h3 id="四-问题">四、问题</h3>
+<h3 id="三-问题">三、问题</h3>
 <pre><code>1.问题
 e4defrag.c:199: error: #error fallocate64 not available!
 Makefile:460: recipe for target 'e4defrag.o' failed
