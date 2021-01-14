@@ -9,7 +9,7 @@
 <meta name="description" content="温故而知新">
 <meta name="theme-color" content="#000">
 <title>使用STM32CubeMX工具配置工程步骤 | 半生志</title>
-<link rel="shortcut icon" href="/favicon.ico?v=1610642675546">
+<link rel="shortcut icon" href="/favicon.ico?v=1610646188794">
 <link rel="stylesheet" href="/media/css/pisces.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
 <link
@@ -197,19 +197,19 @@
     <div class="sidebar-item-box">
       <a href="/archives/">
         
-        <span class="site-item-stat-count">3</span>
+        <span class="site-item-stat-count">4</span>
         <span class="site-item-stat-name language" data-lan="article">文章</span>
       </a>
     </div>
     <div class="sidebar-item-box">
       <a href="">
-        <span class="site-item-stat-count">5</span>
+        <span class="site-item-stat-count">6</span>
         <span class="site-item-stat-name language" data-lan="category">分类</span>
       </a>
     </div>
     <div class="sidebar-item-box">
       <a href="/tags/">
-        <span class="site-item-stat-count">5</span>
+        <span class="site-item-stat-count">6</span>
         <span class="site-item-stat-name language" data-lan="tag">标签</span>
       </a>
     </div>
@@ -1753,6 +1753,225 @@
       <hr>
     </div>
     <div class="result" id="result">
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://Zhangfan94.github.io/post/qml-dong-hua-dong-tai-ci-tie-xiao-guo/"" data-c="
+          &lt;p&gt;最近因项目需要在学习 QML，这个小控件作为对 QML 的一个小练习。控件是想模仿苹果的动态磁贴和windows的开始菜单磁贴效果，当然功能没有水果的强大了😂。内容很简单，没什么说的直接上源码吧。&lt;/p&gt;
+ &lt;!-- more --&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;QML&lt;/strong&gt; (Qt Markup Language)或 Qt Meta Language 或 Qt Modeling Language 是基于 JavaScript 、宣告式编程的编程语言，用于设计用户界面为主的应用程序。它是Qt Quick，诺基亚开发的用户界面创建包的一部分。QML 主要用于移动应用程序，注重于触控输入、流畅的动画（60张/秒）和用户体验。QML documents 描述元素的对象树。&lt;br&gt;
+QML 元素可以透过标准 JavaScript 增强，包括这 inline 和引入.js 档。元素可以也无缝集成和使用 Qt 框架的 C++ 组件扩展。&lt;br&gt;
+语言的名称是 QML。runtime的名称是 QQuickView。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;1-效果展示&#34;&gt;1、效果展示&lt;/h3&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;1&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610645537078.gif&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;h3 id=&#34;2-demo-文件结构&#34;&gt;2、DEMO 文件结构&lt;/h3&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;2&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610645155414.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;h3 id=&#34;3-文件内容&#34;&gt;3、文件内容&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;LiveTileBackground.qml&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-qml&#34;&gt;import QtQuick 2.0
+import QtQuick.Controls 2.2
+
+Rectangle {
+
+    property alias bgHeight: bg.height
+    property alias bgWidth: bg.width
+    property alias bgColor: bg.color
+
+    id: bg
+    width: 145
+    height: 145
+    color: &amp;quot;#222324&amp;quot;
+    radius: 15
+    border.color: &amp;quot;#bbbbbb&amp;quot;
+    border.width: 1.5
+    clip: true
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;LiveTileFlipable.qml&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-qml&#34;&gt;import QtQuick 2.0
+import QtQuick.Controls 2.2
+import QtQml 2.0
+
+Flipable{
+
+    id: flipable
+    width: 145
+    height: 145
+
+    property alias flipFront: flipable.front
+    property alias flipBack: flipable.back
+    property alias overtimeTimer: timer
+    property real opsOvertime: 4000
+    property real rotationDuration: 1000
+    property bool flipped: false
+    property bool autoFlip: true
+
+    Timer {
+        id: timer
+        interval: opsOvertime
+        repeat: false
+        onTriggered: {
+            flipable.flipped = false
+        }
+    }
+
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        propagateComposedEvents: true
+
+        onDoubleClicked: { mouse.accepted = false;}
+        onPositionChanged: { mouse.accepted = false;}
+        onPressed:  {
+            console.log(&amp;quot;onClicked&amp;quot;)
+            if(autoFlip === true){
+                flipable.flipped = true
+                timer.start()
+            }
+            else{
+                flipable.flipped = !flipable.flipped
+            }
+
+            mouse.accepted = false;
+        }
+        onPressAndHold: { mouse.accepted = false; }
+        onClicked:  { mouse.accepted = false;}
+        onReleased: { mouse.accepted = false;}
+        onWheel: { wheel.accepted = false; }
+    }
+
+    transform: Rotation{
+        id: rotation
+        origin.x: flipable.width/2
+        origin.y: flipable.height/2
+        axis{x:0; y:1; z:0}
+        angle: 0
+    }
+
+    states:State {
+            name: &amp;quot;back&amp;quot;
+            PropertyChanges {
+                target: rotation
+                angle: 180
+            }
+            when: flipable.flipped
+        }
+
+    transitions: Transition {
+        NumberAnimation {
+            target: rotation
+            property: &amp;quot;angle&amp;quot;
+            duration: rotationDuration
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;LiveTileImageTextRow.qml&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-qml&#34;&gt;import QtQuick 2.0
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.0
+
+LiveTileBackground{
+    id: backgroundLable
+    width: 281
+    height: 100
+
+    property alias tileImageVisible: tileImage.visible
+    property alias tileImageSource: tileImage.source
+    property alias tileLableText: tileLable.text
+    property alias tileLableVisible: tileLable.visible
+
+    RowLayout {
+        id:layout
+        anchors.fill: parent
+        anchors.rightMargin: 10
+        anchors.leftMargin: 10
+        spacing: 0
+
+        Image {
+            id: tileImage
+
+            sourceSize.height: 60
+            sourceSize.width: 60
+
+            fillMode: Image.PreserveAspectFit
+
+            anchors.verticalCenter: parent.verticalCenter
+            Layout.preferredHeight: parent.height - 20
+            Layout.preferredWidth: parent.height - 20
+
+        }
+
+        Item {
+            id: spacer
+            Layout.fillHeight: true// spacer item
+            Layout.fillWidth: true
+        }
+
+        Text {
+            id: tileLable
+            color: &amp;quot;#ffffff&amp;quot;
+            font.pixelSize: 40
+            horizontalAlignment: Text.AlignRight
+            verticalAlignment: Text.AlignVCenter
+            fontSizeMode: Text.Fit
+            minimumPixelSize: 12
+
+            anchors.verticalCenter: parent.verticalCenter
+            Layout.preferredHeight: parent.height - 20
+            Layout.preferredWidth: parent.width - tileImage.width - 20
+
+        }
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;main.qml&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-qml&#34;&gt;import QtQuick 2.9
+import QtQuick.Window 2.2
+import QtQuick.Controls 2.2
+
+Window {
+    width: 200
+    height: 150
+    visible: true
+
+    LiveTileFlipable {
+        id: volumeFlipable
+        width: parent.width
+        height: parent.height
+
+        flipFront: LiveTileImageTextRow {
+            id: volumeLable
+            tileImageSource: &amp;quot;qrc:/Volume.png&amp;quot;
+            tileLableText: &amp;quot;10&amp;quot;
+            anchors.fill: parent
+            anchors.margins: 10
+        }
+
+        flipBack: LiveTileBackground {
+            anchors.fill: parent
+            anchors.margins: 10
+
+            Slider{
+                id: volumeSlider
+                width: parent.width
+                height: parent.height/2
+                value: 0.4
+                anchors.margins: 5
+                anchors.centerIn: parent
+                onValueChanged: {
+                    volumeFlipable.overtimeTimer.restart()
+                }
+            }
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+">QML 动画——动态磁贴效果</a>
+      </div>
       
       <div class="item">
         <a class="result-title" style="opacity: 0;" href="https://Zhangfan94.github.io/post/hi3535-ping-tai-yi-zhi-e2fsprogs/"" data-c="
