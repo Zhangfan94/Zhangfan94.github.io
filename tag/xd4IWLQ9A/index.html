@@ -9,7 +9,7 @@
 <meta name="description" content="温故而知新">
 <meta name="theme-color" content="#000">
 <title>半生志</title>
-<link rel="shortcut icon" href="/favicon.ico?v=1610675177107">
+<link rel="shortcut icon" href="/favicon.ico?v=1610728389477">
 <link rel="stylesheet" href="/media/css/pisces.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
 <link
@@ -71,6 +71,8 @@
           
             
             
+              
+            
             <li class="nav-item ">
               
               
@@ -81,6 +83,8 @@
             </li>
           
             
+            
+              
             
             <li class="nav-item ">
               
@@ -93,6 +97,8 @@
           
             
             
+              
+            
             <li class="nav-item ">
               
               
@@ -104,6 +110,8 @@
           
             
             
+              
+            
             <li class="nav-item ">
               
               
@@ -113,6 +121,16 @@
               
             </li>
           
+          
+            
+              <li class="nav-item ">
+                <a href="/friends/" target="_self">
+                  
+                    <i class="fa fa-address-book"></i> 友情链接
+                  
+                </a>
+              </li>
+            
           
           
             <li id="fa_search" class="nav-item">
@@ -179,24 +197,31 @@
     <div class="sidebar-item-box">
       <a href="/archives/">
         
-        <span class="site-item-stat-count">4</span>
+        <span class="site-item-stat-count">6</span>
         <span class="site-item-stat-name language" data-lan="article">文章</span>
       </a>
     </div>
     <div class="sidebar-item-box">
       <a href="">
-        <span class="site-item-stat-count">6</span>
+        <span class="site-item-stat-count">7</span>
         <span class="site-item-stat-name language" data-lan="category">分类</span>
       </a>
     </div>
     <div class="sidebar-item-box">
       <a href="/tags/">
-        <span class="site-item-stat-count">6</span>
+        <span class="site-item-stat-count">7</span>
         <span class="site-item-stat-name language" data-lan="tag">标签</span>
       </a>
     </div>
   </div>
   
+    
+      <div class="sidebar-item">
+        <span class="site-item-rss">
+            <i class="fa fa-rss"></i>
+            <a href="https://Zhangfan94.github.io/atom.xml" target="_blank">RSS</a>
+        </span>
+      </div>
     
   
   
@@ -216,8 +241,6 @@
         
       </div>
     </div>
-  
-
   
 
 
@@ -249,6 +272,44 @@
           <small class="language" data-lan="tag">标签</small>
         </h2>
       </div>
+      
+      
+      
+      
+      
+      <a href="https://Zhangfan94.github.io/post/shi-yong-rt-thread-studio-cubemx-kai-fa-xiang-mu-er-shi-yong-pwm/">
+        <div class="motion-warpper">
+          <div class="tag-post-node">
+            <h1>
+              01-15
+              <small>使用RT-Thread Studio + CubeMX开发项目（二）：使用pwm</small>
+            </h1>
+          </div>
+        </div>
+      </a>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <a href="https://Zhangfan94.github.io/post/shi-yong-rt-thread-studio-cubemx-kai-fa-xiang-mu-yi-shi-yong-uart/">
+        <div class="motion-warpper">
+          <div class="tag-post-node">
+            <h1>
+              01-15
+              <small>使用RT-Thread Studio + CubeMX开发项目（一）：使用uart</small>
+            </h1>
+          </div>
+        </div>
+      </a>
+      
+      
+      
+      
       
       
       
@@ -301,7 +362,7 @@
         href="https://github.com/hsxyhao/gridea-theme-next" target="_blank">HsxyHao</a>
     </div>
     <div class="poweredby">
-      
+      <a href="https://beian.miit.gov.cn/" target="_blank">陕ICP备20001006号-1</a>
     </div>
   </footer>
   
@@ -322,6 +383,32 @@
   <div id="landlord" style="left: 30px;bottom: 20px;"
     data-key="">
     <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
+    
+
+      <div class="message" style="opacity:0"></div>
+      <div class="live_talk_input_body">
+        <div class="live_talk_input_name_body">
+          <input name="name" type="text" class="live_talk_name white_input" id="AIuserName" autocomplete="off"
+            placeholder="你的名字" />
+        </div>
+        <div class="live_talk_input_text_body">
+          <input name="talk" type="text" class="live_talk_talk white_input" id="AIuserText" autocomplete="off"
+            placeholder="要和我聊什么呀？" />
+          <button type="button" class="live_talk_send_btn" id="talk_send">发送</button>
+        </div>
+      </div>
+      <input name="live_talk" id="live_talk" value="1" type="hidden" />
+      <div class="live_ico_box">
+        <div class="live_ico_item type_info" id="showInfoBtn"></div>
+        <div class="live_ico_item type_talk" id="showTalkBtn"></div>
+        
+        <div class="live_ico_item type_youdu" id="youduButton"></div>
+        <div class="live_ico_item type_quit" id="hideButton"></div>
+        <input name="live_statu_val" id="live_statu_val" value="0" type="hidden" />
+        <audio src="" style="display:none;" id="live2d_bgm" data-bgm="0" preload="none"></audio>
+        <input id="duType" value="douqilai" type="hidden">
+        
+      </div>
     
   </div>
 </div>
@@ -959,7 +1046,7 @@
   }
 
   // 链接跳转
-  let newWindow = 'false'
+  let newWindow = 'true'
   if (newWindow === 'true') {
     let links = document.querySelectorAll('.post-body a')
     links.forEach(item => {
@@ -1010,8 +1097,497 @@
     <div class="result" id="result">
       
       <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://Zhangfan94.github.io/post/shi-yong-rt-thread-studio-cubemx-kai-fa-xiang-mu-er-shi-yong-pwm/"" data-c="
+          &lt;p&gt;摘要：本文主要记录如何使用 RT-Thread Studio + CubeMX 来配置 STM32 上的 PWM 器件。&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h3 id=&#34;第一步-利用-rt-thread-studio-配置-pwm-相关代码接着-uart2-项目进行&#34;&gt;第一步、利用 RT-Thread Studio 配置 PWM 相关代码（接着 UART2 项目进行）&lt;/h3&gt;
+&lt;p&gt;首先在 board.h 中官方给出了如何在 rtt 中使用 pwm。&lt;/p&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;1&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610726552242.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;STEP 1：RT-Thread Settings 中打开 PWM 驱动支持。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;2&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610726522880.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;STEP 2：在 board.h 中定义相关宏，这里注意 “BSP_USING_PWM1_CH1 ”，这个也是需要的，可以看。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;/** if you want to use pwm you can use the following instructions.
+ *
+ * STEP 1, open pwm driver framework support in the RT-Thread Settings file
+ *
+ * STEP 2, define macro related to the pwm
+ *                 such as     #define BSP_USING_PWM1
+ *
+ * STEP 3, copy your pwm timer init function from stm32xxxx_hal_msp.c generated by stm32cubemx to the end if board.c file
+ *                 such as     void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)  and
+ *                             void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
+ *
+ * STEP 4, modify your stm32xxxx_hal_config.h file to support pwm peripherals. define macro related to the peripherals
+ *                 such as     #define HAL_TIM_MODULE_ENABLED
+ *
+ */
+
+/*#define BSP_USING_PWM1*/
+/*#define BSP_USING_PWM2*/
+/*#define BSP_USING_PWM3*/
+
+#define BSP_USING_PWM1
+#define BSP_USING_PWM1_CH1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;下面是源码中对 “BSP_USING_PWM1_CH1” 的使用：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;static void pwm_get_channel(void)
+{
+#ifdef BSP_USING_PWM1_CH1
+    stm32_pwm_obj[PWM1_INDEX].channel |= 1 &amp;lt;&amp;lt; 0;
+#endif
+#ifdef BSP_USING_PWM1_CH2
+    stm32_pwm_obj[PWM1_INDEX].channel |= 1 &amp;lt;&amp;lt; 1;
+#endif
+
+......
+
+#ifdef BSP_USING_PWM9_CH4
+    stm32_pwm_obj[PWM9_INDEX].channel |= 1 &amp;lt;&amp;lt; 3;
+#endif
+#ifdef BSP_USING_PWM12_CH1
+    stm32_pwm_obj[PWM12_INDEX].channel |= 1 &amp;lt;&amp;lt; 0;
+#endif
+#ifdef BSP_USING_PWM12_CH2
+    stm32_pwm_obj[PWM12_INDEX].channel |= 1 &amp;lt;&amp;lt; 1;
+#endif
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;STEP 3：使用 cubemx 生成，pwm 的初始化相关代码 HAL_TIM_Base_MspInit 和 HAL_TIM_MspPostInit (只需要修改红色标记就可以，其他的我们使用 rtt 中提供的 API 来修改就好，drv_pwm_set 函数中会根据用户需要的周期和占空比自动计算相应的参数)，并拷贝到 board.c 中。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;3&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610726584380.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;pre&gt;&lt;code&gt;```cpp
+static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration *configuration)
+{
+    rt_uint32_t period, pulse;
+    rt_uint64_t tim_clock, psc;
+    /* Converts the channel number to the channel number of Hal library */
+    rt_uint32_t channel = 0x04 * (configuration-&amp;gt;channel - 1);
+
+		... ...
+
+    /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
+    tim_clock /= 1000000UL;
+    period = (unsigned long long)configuration-&amp;gt;period * tim_clock / 1000ULL ;
+    psc = period / MAX_PERIOD + 1;
+    period = period / psc;
+    __HAL_TIM_SET_PRESCALER(htim, psc - 1);
+
+    if (period &amp;lt; MIN_PERIOD)
+    {
+        period = MIN_PERIOD;
+    }
+    __HAL_TIM_SET_AUTORELOAD(htim, period - 1);
+
+    pulse = (unsigned long long)configuration-&amp;gt;pulse * tim_clock / psc / 1000ULL;
+    if (pulse &amp;lt; MIN_PULSE)
+    {
+        pulse = MIN_PULSE;
+    }
+    else if (pulse &amp;gt; period)
+    {
+        pulse = period;
+    }
+    __HAL_TIM_SET_COMPARE(htim, channel, pulse - 1);
+    __HAL_TIM_SET_COUNTER(htim, 0);
+
+    /* Update frequency value */
+    HAL_TIM_GenerateEvent(htim, TIM_EVENTSOURCE_UPDATE);
+
+    return RT_EOK;
+}
+```
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;STEP 4：修改 stm32xxxx_hal_config.h 文件，打开 HAL 对相关功能的支持。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;4&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610726601903.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;需要在 pwm_config.h 文件中自己构建 PWM1_CONFIG ，否则使用 PWM1 时，编译报错。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;#ifdef BSP_USING_PWM1
+#ifndef PWM1_CONFIG
+#define PWM1_CONFIG                             \
+    {                                           \
+       .tim_handle.Instance     = TIM1,         \
+       .name                    = &amp;quot;pwm1&amp;quot;,       \
+       .channel                 = 0             \
+    }
+#endif /* PWM1_CONFIG */
+#endif /* BSP_USING_PWM1 */
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;第二步-完善对-pwm-初始化及测试的代码&#34;&gt;第二步、完善对 PWM 初始化及测试的代码&lt;/h3&gt;
+&lt;p&gt;创建路径 “RttDemo\applications\service\pwm” 并创建文件 “PwmChanel1.h” “PwmChanel1.c”。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;“PwmChanel1.h” 内容如下：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;/*
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020-10-23     ZhangFan     first version
+ */
+
+#ifndef _PWM_CHANEL_1_H_
+#define _PWM_CHANEL_1_H_
+
+#include &amp;lt;rtdevice.h&amp;gt;
+
+rt_bool_t pwm_ch1_init();
+
+/* 设置PWM1 的频率 */
+rt_bool_t pwm_ch1_set_freq(rt_uint32_t freq);
+
+/* 设置PWM1 的占空比 */
+rt_bool_t pwm_ch1_set_duty(rt_uint32_t duty);
+
+#endif //_PWM_CHANEL_1_H_
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;“PwmChanel1.c” 内容如下：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;/*
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020-10-21     ZhangFan     first version
+ */
+
+#include &amp;quot;PwmChanel1.h&amp;quot;
+
+/* log */
+#define DBG_TAG    &amp;quot;PwmChanel1&amp;quot;
+#define DBG_LVL    DBG_LOG
+#include &amp;lt;rtdbg.h&amp;gt;
+
+/* pwm chanel */
+#define PWM_DEV_NAME        &amp;quot;pwm1&amp;quot;  /* PWM设备名称 */
+#define PWM_DEV_CHANNEL     1       /* PWM通道 */
+struct rt_device_pwm *pwm_dev;      /* PWM设备句柄 */
+
+rt_uint32_t period = 500000000;     /* 周期为5ms，单位为纳秒ns */
+rt_uint32_t pulse  = 250000000;     /* PWM脉冲宽度值，单位为纳秒ns */
+
+rt_bool_t pwm_ch1_init()
+{
+    /* step 1、查找设备 */
+    pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME);
+    if (pwm_dev == RT_NULL)
+    {
+        LOG_D(&amp;quot;pwm run failed! can&#39;t find %s device!\n&amp;quot;, PWM_DEV_NAME);
+        return RT_FALSE;
+    }
+
+    /* step 2、设置PWM周期和脉冲宽度 */
+    rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, period, pulse);
+
+    /* step 3、使能 PWM 设备的输出通道 */
+    rt_pwm_enable(pwm_dev, PWM_DEV_CHANNEL);
+
+    return RT_TRUE;
+}
+
+/* 设置PWM1 的频率 */
+rt_bool_t pwm_ch1_set_freq(rt_uint32_t freq)
+{
+    if(RT_EOK != rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, freq, pulse))
+    {
+        return RT_FALSE;
+    }
+
+    period = freq;
+
+    return RT_TRUE;
+}
+
+/* 设置PWM1 的占空比 */
+rt_bool_t pwm_ch1_set_duty(rt_uint32_t duty)
+{
+    if(RT_EOK != rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, period, duty))
+    {
+        return RT_FALSE;
+    }
+
+    pulse = duty;
+
+    return RT_TRUE;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;“main.c”函数内容：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;#include &amp;lt;rtthread.h&amp;gt;
+
+#define DBG_TAG &amp;quot;main&amp;quot;
+#define DBG_LVL DBG_LOG
+#include &amp;lt;rtdbg.h&amp;gt;
+
+#include &amp;quot;SerialUart2.h&amp;quot;
+#include &amp;quot;PwmChanel1.h&amp;quot;
+
+int main(void)
+{
+    int count = 1;
+
+    serial2_init(); /* 串口2初始化 */
+    pwm_ch1_init(); /* PWM 初始化 */
+
+    while (count++)
+    {
+        //LOG_D(&amp;quot;Hello RT-Thread!&amp;quot;);
+        serial2_write(&amp;quot;Hello RT-Thread!\r\n&amp;quot;, sizeof(&amp;quot;Hello RT-Thread!\r\n&amp;quot;) - 1);
+        rt_thread_mdelay(1000);
+    }
+
+    return RT_EOK;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;第三步-烧写并测试&#34;&gt;第三步、烧写并测试&lt;/h3&gt;
+&lt;p&gt;测试但是一直没有 PWM 波形输出，去论坛转了转，发现这个帖子：&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://club.rt-thread.org/ask/question/424912.html&#34;&gt;drv_pwm.c 有bug&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;增加下边这部分代码：&lt;/p&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;5&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610726626447.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;p&gt;修改后再次测试，波形出现：&lt;/p&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;6&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610726640871.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;h3 id=&#34;第四步-总结注意点&#34;&gt;第四步、总结注意点&lt;/h3&gt;
+&lt;p&gt;大概说几点需要注意的：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;当使用 pwm 设备时，rtt 会在 stm32_hw_pwm_init 函数中，初始化对应的 Timer 不需要用户单独去初始化。&lt;/li&gt;
+&lt;li&gt;stm32_hw_pwm_init 函数存在 Bug ，没有调用 “HAL_TIM_Base_Init” 函数。&lt;/li&gt;
+&lt;li&gt;要加 BSP_USING_PWM1_CH1 个宏。&lt;/li&gt;
+&lt;li&gt;pwm_config.h 文件中自己构建 PWM1_CONFIG。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;pwm参考知识&#34;&gt;PWM参考知识：&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.waveshare.net/study/article-643-1.html&#34;&gt;STM32CubeMX系列教程4:PWM&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.rt-thread.org/document/site/programming-manual/device/pwm/pwm/&#34;&gt;PWM设备 - RT-Thread 文档中心&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://blog.csdn.net/m0_37697335/article/details/109008836&#34;&gt;RT-Thread Studio - 使用PWM设备_玄机百问的博客-CSDN博客&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://club.rt-thread.org/ask/question/427270.html&#34;&gt;PWM配置一直没法输出？&lt;/a&gt;&lt;/p&gt;
+">使用RT-Thread Studio + CubeMX开发项目（二）：使用pwm</a>
+      </div>
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://Zhangfan94.github.io/post/shi-yong-rt-thread-studio-cubemx-kai-fa-xiang-mu-yi-shi-yong-uart/"" data-c="
+          &lt;p&gt;摘要：本文将从一个简单的需求出发，利用 RT-Thread Studio + CubeMX 这两个工具，基于 RT-Thread 完成系统创建及开发，目的是为了记录开发过程，方便以后回顾。&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h3 id=&#34;需求描述&#34;&gt;需求描述：&lt;/h3&gt;
+&lt;p&gt;使用 RT-Thread Studio 创建基于 STM32F103RET6 的工程，并 USART1 和 USART2 ，USART1 用于 msh 的输入/输出，USART2 用于其他业务。&lt;/p&gt;
+&lt;h3 id=&#34;第一步-使用rt-thread-studio创建工程rttdemo&#34;&gt;第一步、使用RT-Thread Studio创建工程（RttDemo）&lt;/h3&gt;
+&lt;p&gt;软件安装不做赘述请看官方文档：&lt;a href=&#34;https://www.rt-thread.org/document/site/rtthread-studio/um/studio-user-begin/#rt-thread-studio&#34;&gt;安装 RTT Studio&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;步骤：文件→新建→RT-Thread项目&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610725701339.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;br&gt;
+&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610725711243.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/p&gt;
+&lt;p&gt;注意：RTT Studio 生成的工程使用的是芯片内部HSI时钟，如需修改，请完善 drv_clk.c，将 drv_clk.c 文件中 system_clock_config(int target_freq_Mhz)函数中的内容，替换成我们用 CubeMX 生成的时钟初始化代码。&lt;/p&gt;
+&lt;h3 id=&#34;第二步-使用cubemx配置工程主要是配置时钟&#34;&gt;第二步、使用CubeMX配置工程（主要是配置时钟）&lt;/h3&gt;
+&lt;p&gt;这里只简单说下，详细配置过程可以参考下文的&lt;a href=&#34;http://blog.talk20s.com/2020/01/19/%E4%BD%BF%E7%94%A8STM32CubeMX%E5%B7%A5%E5%85%B7%E9%85%8D%E7%BD%AE%E5%B7%A5%E7%A8%8B%E6%AD%A5%E9%AA%A4/&#34;&gt;链接&lt;/a&gt;，（需要注意的是生成代码的时候，不要勾选 “Generate peripheral initialization as a pair of&amp;quot;.c/.h&#39; files per peripheral” 选项）：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;工程创建，注意创建路&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;1&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610725746506.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;2&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610725758297.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;RCC 设置&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;3&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610725769056.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;时钟配置&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;4&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610725776753.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;h3 id=&#34;第三步-修改项目默认时钟配置为-cubemx-配置的时钟&#34;&gt;第三步、修改项目默认时钟配置为 CubeMX 配置的时钟&lt;/h3&gt;
+&lt;p&gt;在 CubeMX 生成项目中找到 main.c 文件，并使用 main.c 文件中的 SystemClock_Config(void) 函数内容替换掉RTT工程中 drv_clk.c 文件中的 system_clock_config(int target_freq_Mhz) 函数。&lt;/p&gt;
+&lt;h3 id=&#34;第四步-新增串口usart2&#34;&gt;第四步、新增串口（USART2）&lt;/h3&gt;
+&lt;p&gt;可参考官方文档，新增串口部分：&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.rt-thread.org/document/site/rtthread-studio/drivers/uart/v4.0.2/rtthread-studio-uart-v4.0.2/&#34;&gt;完整版 - RT-Thread 文档中心&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;在 RTT 项目 board.h 中添加对 USART2 的支持方法如下：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;// 增加以下宏
+#define BSP_USING_UART2
+#define BSP_UART2_TX_PIN       &amp;quot;PA2&amp;quot;
+#define BSP_UART2_RX_PIN       &amp;quot;PA3&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;5&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610725891127.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;p&gt;编译运行程序， PC 端连接 uart1，在 msh 中，输入 list_device 可以看到 uart2 设备。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;msh &amp;gt;list_device
+device           type         ref count
+-------- -------------------- ----------
+uart2    Character Device     0       
+uart1    Character Device     2       
+pin      Miscellaneous Device 0       
+msh &amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;第五步-封装-usart2-并使用接口输出-hello-rt-thread&#34;&gt;第五步、封装 USART2 并使用接口输出 “Hello RT-Thread!”&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;创建文件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在 applications 目录下创建 service/uart 文件夹，并创建文件 SerialUart2.h 和 SerialUart2.c ，&lt;/p&gt;
+&lt;p&gt;SerialUart2.h 主要内容如下：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;#ifndef _SERIAL_UART_2_H_
+#define _SERIAL_UART_2_H_
+
+#include &amp;lt;rtdevice.h&amp;gt;
+
+rt_bool_t serial2_init();
+
+rt_size_t serial2_write(const void *buffer, rt_size_t size);
+
+rt_size_t serial2_read(void *buffer, rt_size_t size);
+
+rt_bool_t serial2_change_baudrate(rt_uint32_t rate);
+
+#endif //_SERIAL_UART_2_H_
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;SerialUart2.c 主要内容如下：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;#include &amp;quot;SerialUart2.h&amp;quot;
+
+/* log */
+#define DBG_TAG    &amp;quot;SerialUart2&amp;quot;
+#define DBG_LVL    DBG_LOG
+#include &amp;lt;rtdbg.h&amp;gt;
+
+/* uart */
+#define UART_NAME       &amp;quot;uart2&amp;quot;
+static rt_device_t serial;
+
+struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
+
+/* circle buffer */
+#define TX_RING_BUFFER_LEN  100
+#define RX_RING_BUFFER_LEN  100
+
+/* line buffer */
+#define TX_RING_BUFFER_LEN  100
+
+static rt_err_t serial_rx_callback(rt_device_t dev, rt_size_t size)
+{
+    /* 更新超时检测时间 */
+    return RT_EOK;
+}
+
+rt_bool_t serial2_init()
+{
+    rt_err_t ret = RT_EOK;
+
+    serial = rt_device_find(UART_NAME);
+    if (!serial)
+    {
+        LOG_D(&amp;quot;find %s failed!\n&amp;quot;, UART_NAME);
+        return RT_FALSE;
+    }
+
+    ret = rt_device_set_rx_indicate(serial, serial_rx_callback);
+    if(ret != RT_EOK)
+    {
+        LOG_D(&amp;quot;uart2 set rx callback failed\r\n&amp;quot;);
+        return RT_FALSE;
+    }
+
+    ret = rt_device_control(serial, RT_DEVICE_CTRL_CONFIG, &amp;amp;config);
+    if(ret != RT_EOK)
+    {
+        LOG_D(&amp;quot;control device failed\r\n&amp;quot;);
+        return RT_FALSE;
+    }
+
+    ret = rt_device_open(serial, RT_DEVICE_FLAG_INT_RX|RT_DEVICE_FLAG_INT_TX);
+    if (ret != RT_EOK)
+    {
+        LOG_D(&amp;quot;open device failed\r\n&amp;quot;);
+        return RT_FALSE;
+    }
+
+    return RT_TRUE;
+}
+
+rt_size_t serial2_write(const void *buffer, rt_size_t size)
+{
+    return rt_device_write(serial, 0, str, (sizeof(str) - 1));
+}
+
+rt_size_t serial2_read(void *buffer, rt_size_t size)
+{
+    return rt_device_read(serial, 0, buffer, size);
+}
+
+rt_bool_t serial2_change_baudrate(rt_uint32_t rate)
+{
+    rt_err_t ret = RT_EOK;
+    struct serial_configure configtmp = config;
+
+    /* 修改串口波特率 */
+    configtmp.baud_rate = rate;
+
+    ret = rt_device_control(serial, RT_DEVICE_CTRL_CONFIG, &amp;amp;configtmp);
+    if(RT_EOK != ret)
+    {
+        LOG_D(&amp;quot;open device failed\r\n&amp;quot;);
+        return RT_FALSE;
+    }
+
+    return RT_TRUE;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;文件重建完成后，加入头文件路径：&lt;/p&gt;
+&lt;p&gt;在项目上点击右键，再点击属性出现下图中的窗口，在其中添加自己刚创建的路径，并点击“应用并关闭”；&lt;/p&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;6&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610725927138.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;7&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610725935598.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;修改 main.c ，增加对 uart2 的测试代码：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;#include &amp;lt;rtthread.h&amp;gt;
+
+#define DBG_TAG &amp;quot;main&amp;quot;
+#define DBG_LVL DBG_LOG
+#include &amp;lt;rtdbg.h&amp;gt;
+
+#include &amp;quot;SerialUart2.h&amp;quot;
+
+int main(void)
+{
+    int count = 1;
+
+    serial2_init();
+
+    while (count++)
+    {
+        LOG_D(&amp;quot;Hello RT-Thread!&amp;quot;);
+        serial2_write(&amp;quot;Hello RT-Thread!&amp;quot;, sizeof(&amp;quot;Hello RT-Thread!&amp;quot;));
+        rt_thread_mdelay(1000);
+    }
+
+    return RT_EOK;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;编译代码。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;第六步-测试&#34;&gt;第六步、测试&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;使用 JLink 下载程序，并使用 TTL 转 USB 模块连接串口 2 到电脑，电脑上使用串口调试工具接收数据。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;8&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610725949124.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;9&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610725959322.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;10&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610725967697.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;查看 uart1 的输出信息如下，可以看 uart2 已经被使用一次。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;msh &amp;gt;list_device[D/main] Hello RT-Thread!
+
+device           type         ref count
+-------- -------------------- ----------
+uart2    Character Device     1       
+uart1    Character Device     2       
+pin      Miscellaneous Device 0
+&lt;/code&gt;&lt;/pre&gt;
+">使用RT-Thread Studio + CubeMX开发项目（一）：使用uart</a>
+      </div>
+      
+      <div class="item">
         <a class="result-title" style="opacity: 0;" href="https://Zhangfan94.github.io/post/qml-dong-hua-dong-tai-ci-tie-xiao-guo/"" data-c="
-          &lt;p&gt;最近因项目需要在学习 QML，这个小控件作为对 QML 的一个小练习。控件是想模仿苹果的动态磁贴和windows的开始菜单磁贴效果，当然功能没有水果的强大了😂。内容很简单，没什么说的直接上源码吧。&lt;/p&gt;
+          &lt;p&gt;摘要：最近因项目需要在学习 QML，这个小控件作为对 QML 的一个小练习。控件是想模仿苹果的动态磁贴和windows的开始菜单磁贴效果，当然功能没有水果的强大了😂。内容很简单，没什么说的直接上源码吧。&lt;/p&gt;
  &lt;!-- more --&gt;
 &lt;blockquote&gt;
 &lt;p&gt;&lt;strong&gt;QML&lt;/strong&gt; (Qt Markup Language)或 Qt Meta Language 或 Qt Modeling Language 是基于 JavaScript 、宣告式编程的编程语言，用于设计用户界面为主的应用程序。它是Qt Quick，诺基亚开发的用户界面创建包的一部分。QML 主要用于移动应用程序，注重于触控输入、流畅的动画（60张/秒）和用户体验。QML documents 描述元素的对象树。&lt;br&gt;
@@ -1225,12 +1801,18 @@ Window {
     }
 }
 &lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;4-知识点&#34;&gt;4、知识点&lt;/h3&gt;
+&lt;p&gt;主要是利用了 QML 的 &lt;a href=&#34;https://doc.qt.io/qt-5/qml-qtquick-flipable.html&#34;&gt;Flipable&lt;/a&gt;  类型，通过 front 和 back 两个属性来设置卡片的正反两面，再利用 &lt;a href=&#34;https://doc.qt.io/qt-5/qml-qtquick-rotation.html&#34;&gt;Rotation&lt;/a&gt;, &lt;a href=&#34;https://doc.qt.io/qt-5/qml-qtquick-state.html&#34;&gt;State&lt;/a&gt; 和 &lt;a href=&#34;https://doc.qt.io/qt-5/qmlexampletoggleswitch.html#transition&#34;&gt;Transition&lt;/a&gt;类型实现了反转的动画效果。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;注意点&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在 LiveTileFlipable.qml 文件中鼠标事件需要透传，否则卡片背面的的 slider 控件无法获取鼠标事件。&lt;/li&gt;
+&lt;/ul&gt;
 ">QML 动画——动态磁贴效果</a>
       </div>
       
       <div class="item">
         <a class="result-title" style="opacity: 0;" href="https://Zhangfan94.github.io/post/hi3535-ping-tai-yi-zhi-e2fsprogs/"" data-c="
-          &lt;p&gt;NVR平台因为经常掉电硬重启，长时间使用中会偶尔出现，存储硬盘文件目录损坏，导致一些文件无法读取和删除，影响视频的循环存储。所以希望每次开机之前系统可以自动检测并修复硬盘损坏的文件以及目录。&lt;/p&gt;
+          &lt;p&gt;摘要：NVR平台因为经常掉电硬重启，长时间使用中会偶尔出现，存储硬盘文件目录损坏，导致一些文件无法读取和删除，影响视频的循环存储。所以希望每次开机之前系统可以自动检测并修复硬盘损坏的文件以及目录。&lt;/p&gt;
 &lt;!-- more --&gt;
 &lt;h3 id=&#34;一-工具&#34;&gt;一、工具&lt;/h3&gt;
 &lt;ol&gt;
@@ -1286,7 +1868,7 @@ http://flash.uchicago.edu/~jbgallag/configure.html
       
       <div class="item">
         <a class="result-title" style="opacity: 0;" href="https://Zhangfan94.github.io/post/hi3536-yi-zhi-qt597/"" data-c="
-          &lt;p&gt;QT在嵌入式平台上使用非常广泛，这次将QT5.9.7移植到Hisi3536平台，在此记录下移植过程，方便以后需要的时候回顾。&lt;/p&gt;
+          &lt;p&gt;摘要：QT在嵌入式平台上使用非常广泛，这次将QT5.9.7移植到Hisi3536平台，在此记录下移植过程，方便以后需要的时候回顾。&lt;/p&gt;
 &lt;!-- more --&gt;
 &lt;h4 id=&#34;搭建交叉编译环境&#34;&gt;搭建交叉编译环境&lt;/h4&gt;
 &lt;p&gt;这一部分，海思的SDK已经写得很清楚了，只需要根据文档执行相对应的脚本就可以部署好环境。&lt;/p&gt;
@@ -1513,7 +2095,7 @@ iface eth0 inet static #static表示使用固定ip，dhcp表示使用动态ip
       
       <div class="item">
         <a class="result-title" style="opacity: 0;" href="https://Zhangfan94.github.io/post/shi-yong-stm32cubemx-gong-ju-pei-zhi-gong-cheng-bu-zou/"" data-c="
-          &lt;p&gt;STM32CubeMX 是 ST 意法半导体近几年来大力推荐的 STM32 芯片图形化配置工具， 允许用户使用图形化向导生成 C 初始化代码，可以大大减轻开发工作，时间和费用。&lt;/p&gt;
+          &lt;p&gt;摘要：STM32CubeMX 是 ST 意法半导体近几年来大力推荐的 STM32 芯片图形化配置工具， 允许用户使用图形化向导生成 C 初始化代码，可以大大减轻开发工作，时间和费用。&lt;/p&gt;
 &lt;!-- more --&gt;
 &lt;p&gt;&lt;strong&gt;STM32CubeMX有以下几个特点：&lt;/strong&gt;&lt;/p&gt;
 &lt;ol&gt;
