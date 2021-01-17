@@ -9,7 +9,7 @@
 <meta name="description" content="温故而知新">
 <meta name="theme-color" content="#000">
 <title>使用RT-Thread Studio + CubeMX开发项目（二）：使用pwm | 半生志</title>
-<link rel="shortcut icon" href="/favicon.ico?v=1610728389477">
+<link rel="shortcut icon" href="/favicon.ico?v=1610857634878">
 <link rel="stylesheet" href="/media/css/pisces.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
 <link
@@ -275,7 +275,6 @@
 <li>
 <ul>
 <li><a href="#%E7%AC%AC%E4%B8%80%E6%AD%A5-%E5%88%A9%E7%94%A8-rt-thread-studio-%E9%85%8D%E7%BD%AE-pwm-%E7%9B%B8%E5%85%B3%E4%BB%A3%E7%A0%81%E6%8E%A5%E7%9D%80-uart2-%E9%A1%B9%E7%9B%AE%E8%BF%9B%E8%A1%8C">第一步、利用 RT-Thread Studio 配置 PWM 相关代码（接着 UART2 项目进行）</a></li>
-<li><a href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5-%E5%AE%8C%E5%96%84%E5%AF%B9-pwm-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8F%8A%E6%B5%8B%E8%AF%95%E7%9A%84%E4%BB%A3%E7%A0%81">第二步、完善对 PWM 初始化及测试的代码</a></li>
 <li><a href="#%E7%AC%AC%E4%B8%89%E6%AD%A5-%E7%83%A7%E5%86%99%E5%B9%B6%E6%B5%8B%E8%AF%95">第三步、烧写并测试</a></li>
 <li><a href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5-%E6%80%BB%E7%BB%93%E6%B3%A8%E6%84%8F%E7%82%B9">第四步、总结注意点</a></li>
 <li><a href="#pwm%E5%8F%82%E8%80%83%E7%9F%A5%E8%AF%86">PWM参考知识：</a></li>
@@ -593,7 +592,7 @@
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>1080<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>1089<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
     
@@ -671,78 +670,78 @@
 </li>
 </ul>
 <figure data-type="image" tabindex="3"><img src="https://Zhangfan94.github.io/post-images/1610726584380.png" alt="" loading="lazy"></figure>
-<pre><code>```cpp
-static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration *configuration)
-{
-    rt_uint32_t period, pulse;
-    rt_uint64_t tim_clock, psc;
-    /* Converts the channel number to the channel number of Hal library */
-    rt_uint32_t channel = 0x04 * (configuration-&gt;channel - 1);
+<pre><code class="language-cpp"> static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration *configuration)
+ {
+     rt_uint32_t period, pulse;
+     rt_uint64_t tim_clock, psc;
+     /* Converts the channel number to the channel number of Hal library */
+     rt_uint32_t channel = 0x04 * (configuration-&gt;channel - 1);
 
-		... ...
+ 		... ...
 
-    /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
-    tim_clock /= 1000000UL;
-    period = (unsigned long long)configuration-&gt;period * tim_clock / 1000ULL ;
-    psc = period / MAX_PERIOD + 1;
-    period = period / psc;
-    __HAL_TIM_SET_PRESCALER(htim, psc - 1);
+     /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
+     tim_clock /= 1000000UL;
+     period = (unsigned long long)configuration-&gt;period * tim_clock / 1000ULL ;
+     psc = period / MAX_PERIOD + 1;
+     period = period / psc;
+     __HAL_TIM_SET_PRESCALER(htim, psc - 1);
 
-    if (period &lt; MIN_PERIOD)
-    {
-        period = MIN_PERIOD;
-    }
-    __HAL_TIM_SET_AUTORELOAD(htim, period - 1);
+     if (period &lt; MIN_PERIOD)
+     {
+         period = MIN_PERIOD;
+     }
+     __HAL_TIM_SET_AUTORELOAD(htim, period - 1);
 
-    pulse = (unsigned long long)configuration-&gt;pulse * tim_clock / psc / 1000ULL;
-    if (pulse &lt; MIN_PULSE)
-    {
-        pulse = MIN_PULSE;
-    }
-    else if (pulse &gt; period)
-    {
-        pulse = period;
-    }
-    __HAL_TIM_SET_COMPARE(htim, channel, pulse - 1);
-    __HAL_TIM_SET_COUNTER(htim, 0);
+     pulse = (unsigned long long)configuration-&gt;pulse * tim_clock / psc / 1000ULL;
+     if (pulse &lt; MIN_PULSE)
+     {
+         pulse = MIN_PULSE;
+     }
+     else if (pulse &gt; period)
+     {
+         pulse = period;
+     }
+     __HAL_TIM_SET_COMPARE(htim, channel, pulse - 1);
+     __HAL_TIM_SET_COUNTER(htim, 0);
 
-    /* Update frequency value */
-    HAL_TIM_GenerateEvent(htim, TIM_EVENTSOURCE_UPDATE);
+     /* Update frequency value */
+     HAL_TIM_GenerateEvent(htim, TIM_EVENTSOURCE_UPDATE);
 
-    return RT_EOK;
-}
-```
-</code></pre>
-<ul>
-<li>STEP 4：修改 stm32xxxx_hal_config.h 文件，打开 HAL 对相关功能的支持。</li>
-</ul>
-<figure data-type="image" tabindex="4"><img src="https://Zhangfan94.github.io/post-images/1610726601903.png" alt="" loading="lazy"></figure>
-<ul>
-<li>
-<p>需要在 pwm_config.h 文件中自己构建 PWM1_CONFIG ，否则使用 PWM1 时，编译报错。</p>
-<pre><code class="language-cpp">#ifdef BSP_USING_PWM1
-#ifndef PWM1_CONFIG
-#define PWM1_CONFIG                             \
-    {                                           \
-       .tim_handle.Instance     = TIM1,         \
-       .name                    = &quot;pwm1&quot;,       \
-       .channel                 = 0             \
-    }
-#endif /* PWM1_CONFIG */
-#endif /* BSP_USING_PWM1 */
-</code></pre>
-</li>
-</ul>
-<h3 id="第二步-完善对-pwm-初始化及测试的代码">第二步、完善对 PWM 初始化及测试的代码</h3>
-<p>创建路径 “RttDemo\applications\service\pwm” 并创建文件 “PwmChanel1.h” “PwmChanel1.c”。</p>
-<ul>
-<li>“PwmChanel1.h” 内容如下：</li>
-</ul>
-<pre><code class="language-cpp">/*
- * Change Logs:
- * Date           Author       Notes
- * 2020-10-23     ZhangFan     first version
- */
+     return RT_EOK;
+ }
+ ```
+
+- STEP 4：修改 stm32xxxx_hal_config.h 文件，打开 HAL 对相关功能的支持。
+
+![](https://Zhangfan94.github.io/post-images/1610726601903.png)
+
+- 需要在 pwm_config.h 文件中自己构建 PWM1_CONFIG ，否则使用 PWM1 时，编译报错。
+
+ ```cpp
+ #ifdef BSP_USING_PWM1
+ #ifndef PWM1_CONFIG
+ #define PWM1_CONFIG                             \
+     {                                           \
+        .tim_handle.Instance     = TIM1,         \
+        .name                    = &quot;pwm1&quot;,       \
+        .channel                 = 0             \
+     }
+ #endif /* PWM1_CONFIG */
+ #endif /* BSP_USING_PWM1 */
+ ```
+
+### 第二步、完善对 PWM 初始化及测试的代码
+
+创建路径 “RttDemo\applications\service\pwm” 并创建文件 “PwmChanel1.h” “PwmChanel1.c”。
+
+- “PwmChanel1.h” 内容如下：
+
+```cpp
+/*
+* Change Logs:
+* Date           Author       Notes
+* 2020-10-23     ZhangFan     first version
+*/
 
 #ifndef _PWM_CHANEL_1_H_
 #define _PWM_CHANEL_1_H_
@@ -861,9 +860,9 @@ int main(void)
 <p>测试但是一直没有 PWM 波形输出，去论坛转了转，发现这个帖子：</p>
 <p><a href="https://club.rt-thread.org/ask/question/424912.html">drv_pwm.c 有bug</a></p>
 <p>增加下边这部分代码：</p>
-<figure data-type="image" tabindex="5"><img src="https://Zhangfan94.github.io/post-images/1610726626447.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="4"><img src="https://Zhangfan94.github.io/post-images/1610726626447.png" alt="" loading="lazy"></figure>
 <p>修改后再次测试，波形出现：</p>
-<figure data-type="image" tabindex="6"><img src="https://Zhangfan94.github.io/post-images/1610726640871.png" alt="" loading="lazy"></figure>
+<figure data-type="image" tabindex="5"><img src="https://Zhangfan94.github.io/post-images/1610726640871.png" alt="" loading="lazy"></figure>
 <h3 id="第四步-总结注意点">第四步、总结注意点</h3>
 <p>大概说几点需要注意的：</p>
 <ol>
@@ -996,9 +995,16 @@ int main(void)
   
   
   
+  <div class="bg-img">
+    <img src="http://static.simpledesktops.com/uploads/desktops/2011/11/26/rosie_2560_1600.png" />
+  </div>
+  
+  
+  
+  
 <link rel="stylesheet" href="/media/live2d/css/live2d.css" />
 <div class="box-scale">
-  <div id="landlord" style="left: 30px;bottom: 20px;"
+  <div id="landlord" style="left: 0px;bottom: 0px;"
     data-key="">
     <canvas id="live2d" width="500" height="560" class="live2d"></canvas>
     
@@ -1477,7 +1483,7 @@ int main(void)
 		}
 		$(document).ready(function () {
 			var AIimgSrc = [];
-			let chooseLive2d = 'hijiki'
+			let chooseLive2d = 'tororo'
 			if (chooseLive2d === 'histoire') {
 				AIimgSrc.push(message_Path + "model/histoire/histoire.1024/texture_00.png");
 				AIimgSrc.push(message_Path + "model/histoire/histoire.1024/texture_01.png");
@@ -2027,78 +2033,78 @@ int main(void)
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;figure data-type=&#34;image&#34; tabindex=&#34;3&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610726584380.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
-&lt;pre&gt;&lt;code&gt;```cpp
-static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration *configuration)
-{
-    rt_uint32_t period, pulse;
-    rt_uint64_t tim_clock, psc;
-    /* Converts the channel number to the channel number of Hal library */
-    rt_uint32_t channel = 0x04 * (configuration-&amp;gt;channel - 1);
+&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt; static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration *configuration)
+ {
+     rt_uint32_t period, pulse;
+     rt_uint64_t tim_clock, psc;
+     /* Converts the channel number to the channel number of Hal library */
+     rt_uint32_t channel = 0x04 * (configuration-&amp;gt;channel - 1);
 
-		... ...
+ 		... ...
 
-    /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
-    tim_clock /= 1000000UL;
-    period = (unsigned long long)configuration-&amp;gt;period * tim_clock / 1000ULL ;
-    psc = period / MAX_PERIOD + 1;
-    period = period / psc;
-    __HAL_TIM_SET_PRESCALER(htim, psc - 1);
+     /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
+     tim_clock /= 1000000UL;
+     period = (unsigned long long)configuration-&amp;gt;period * tim_clock / 1000ULL ;
+     psc = period / MAX_PERIOD + 1;
+     period = period / psc;
+     __HAL_TIM_SET_PRESCALER(htim, psc - 1);
 
-    if (period &amp;lt; MIN_PERIOD)
-    {
-        period = MIN_PERIOD;
-    }
-    __HAL_TIM_SET_AUTORELOAD(htim, period - 1);
+     if (period &amp;lt; MIN_PERIOD)
+     {
+         period = MIN_PERIOD;
+     }
+     __HAL_TIM_SET_AUTORELOAD(htim, period - 1);
 
-    pulse = (unsigned long long)configuration-&amp;gt;pulse * tim_clock / psc / 1000ULL;
-    if (pulse &amp;lt; MIN_PULSE)
-    {
-        pulse = MIN_PULSE;
-    }
-    else if (pulse &amp;gt; period)
-    {
-        pulse = period;
-    }
-    __HAL_TIM_SET_COMPARE(htim, channel, pulse - 1);
-    __HAL_TIM_SET_COUNTER(htim, 0);
+     pulse = (unsigned long long)configuration-&amp;gt;pulse * tim_clock / psc / 1000ULL;
+     if (pulse &amp;lt; MIN_PULSE)
+     {
+         pulse = MIN_PULSE;
+     }
+     else if (pulse &amp;gt; period)
+     {
+         pulse = period;
+     }
+     __HAL_TIM_SET_COMPARE(htim, channel, pulse - 1);
+     __HAL_TIM_SET_COUNTER(htim, 0);
 
-    /* Update frequency value */
-    HAL_TIM_GenerateEvent(htim, TIM_EVENTSOURCE_UPDATE);
+     /* Update frequency value */
+     HAL_TIM_GenerateEvent(htim, TIM_EVENTSOURCE_UPDATE);
 
-    return RT_EOK;
-}
-```
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;STEP 4：修改 stm32xxxx_hal_config.h 文件，打开 HAL 对相关功能的支持。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;figure data-type=&#34;image&#34; tabindex=&#34;4&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610726601903.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;需要在 pwm_config.h 文件中自己构建 PWM1_CONFIG ，否则使用 PWM1 时，编译报错。&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;#ifdef BSP_USING_PWM1
-#ifndef PWM1_CONFIG
-#define PWM1_CONFIG                             \
-    {                                           \
-       .tim_handle.Instance     = TIM1,         \
-       .name                    = &amp;quot;pwm1&amp;quot;,       \
-       .channel                 = 0             \
-    }
-#endif /* PWM1_CONFIG */
-#endif /* BSP_USING_PWM1 */
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;第二步-完善对-pwm-初始化及测试的代码&#34;&gt;第二步、完善对 PWM 初始化及测试的代码&lt;/h3&gt;
-&lt;p&gt;创建路径 “RttDemo\applications\service\pwm” 并创建文件 “PwmChanel1.h” “PwmChanel1.c”。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;“PwmChanel1.h” 内容如下：&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class=&#34;language-cpp&#34;&gt;/*
- * Change Logs:
- * Date           Author       Notes
- * 2020-10-23     ZhangFan     first version
- */
+     return RT_EOK;
+ }
+ ```
+
+- STEP 4：修改 stm32xxxx_hal_config.h 文件，打开 HAL 对相关功能的支持。
+
+![](https://Zhangfan94.github.io/post-images/1610726601903.png)
+
+- 需要在 pwm_config.h 文件中自己构建 PWM1_CONFIG ，否则使用 PWM1 时，编译报错。
+
+ ```cpp
+ #ifdef BSP_USING_PWM1
+ #ifndef PWM1_CONFIG
+ #define PWM1_CONFIG                             \
+     {                                           \
+        .tim_handle.Instance     = TIM1,         \
+        .name                    = &amp;quot;pwm1&amp;quot;,       \
+        .channel                 = 0             \
+     }
+ #endif /* PWM1_CONFIG */
+ #endif /* BSP_USING_PWM1 */
+ ```
+
+### 第二步、完善对 PWM 初始化及测试的代码
+
+创建路径 “RttDemo\applications\service\pwm” 并创建文件 “PwmChanel1.h” “PwmChanel1.c”。
+
+- “PwmChanel1.h” 内容如下：
+
+```cpp
+/*
+* Change Logs:
+* Date           Author       Notes
+* 2020-10-23     ZhangFan     first version
+*/
 
 #ifndef _PWM_CHANEL_1_H_
 #define _PWM_CHANEL_1_H_
@@ -2217,9 +2223,9 @@ int main(void)
 &lt;p&gt;测试但是一直没有 PWM 波形输出，去论坛转了转，发现这个帖子：&lt;/p&gt;
 &lt;p&gt;&lt;a href=&#34;https://club.rt-thread.org/ask/question/424912.html&#34;&gt;drv_pwm.c 有bug&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;增加下边这部分代码：&lt;/p&gt;
-&lt;figure data-type=&#34;image&#34; tabindex=&#34;5&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610726626447.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;4&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610726626447.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
 &lt;p&gt;修改后再次测试，波形出现：&lt;/p&gt;
-&lt;figure data-type=&#34;image&#34; tabindex=&#34;6&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610726640871.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
+&lt;figure data-type=&#34;image&#34; tabindex=&#34;5&#34;&gt;&lt;img src=&#34;https://Zhangfan94.github.io/post-images/1610726640871.png&#34; alt=&#34;&#34; loading=&#34;lazy&#34;&gt;&lt;/figure&gt;
 &lt;h3 id=&#34;第四步-总结注意点&#34;&gt;第四步、总结注意点&lt;/h3&gt;
 &lt;p&gt;大概说几点需要注意的：&lt;/p&gt;
 &lt;ol&gt;
