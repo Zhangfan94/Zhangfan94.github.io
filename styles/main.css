@@ -2051,15 +2051,17 @@ p > code {
     margin-bottom: 10px;
   }
 }
-body {
+.bg-color .bg-color {
+      background: transparent !important;
+    }body {
       background-color: #eee;
     }.header {
-        width: 1100px;
+        width: 960px;
         margin: 0 auto;
       }
 
       .main-continer {
-        width: 1100px;
+        width: 960px;
         margin: 0 auto;
       }
     body {
@@ -2072,7 +2074,7 @@ body {
       border-bottom-color: #555;
     }
     .archive-timeline-box::after, .tag-timeline-wrapper::after {
-      background: #eeeeeefe;
+      background: #eeeeeef2;
     }h1, h2, h3, h4, h5, h6 {
       color: #555;
     }
@@ -2119,11 +2121,11 @@ body {
       }.nav-item a:hover {
         color: #222;
       }.nav-item-active {
-      background: #f9f9f9fe;
+      background: #f9f9f9f2;
     }
 
     .nav-item:hover {
-      background: #f9f9f9fe;
+      background: #f9f9f9f2;
       color: rgba(0, 0, 0, 0.98);
     }.site-author-image {
       border-radius: 50%;
@@ -2134,14 +2136,7 @@ body {
       transition-property: all;
       transition-duration: 59s;
       transition-timing-function: cubic-bezier(.34,0,.84,1);
-    }.pisces .blog-header, .gemini .blog-header {
-        right: 0;
-      }
-      .pisces .section-layout-wrapper, .gemini .section-layout-wrapper {
-        flex-direction: row-reverse !important;
-      }.pisces .sidebar, .gemini .sidebar {
-        right: 0;
-      }.markdownIt-TOC a {
+    }.markdownIt-TOC a {
       color: #868e96;
       border-bottom-color: #868e96;
     }.markdownIt-TOC a:hover {
@@ -2166,7 +2161,13 @@ body {
       color: #fc6423;
       border-bottom-color: #fc6423;
     }.bg-color {
-      background-color: #fffffffe;
+      background-color: #fffffff2;
+    }
+    .gemini .blog-header, .gemini .sidebar-wrapper, .gemini .article-wrapper, .gemini .post, .gemini .page, .gemini .section, .gemini .section-box, .gemini .sidebar-box, .gemini .friends-section {
+      border-radius: 5px;
+    }
+    .pisces .blog-header, .pisces .sidebar-wrapper, .pisces .article-wrapper, .pisces .section, .pisces .sidebar-box, .pisces .friends-section {
+      border-radius: 5px;
     }
     .site-meta {
       background: #000 !important;
@@ -2175,13 +2176,13 @@ body {
       background: #000;
     }
     .brand {
-      background: #000000fe;
+      background: #000000f2;
     }
     .main-title, .brand {
       color: #FFF !important;
     }
     .mist .site-title i {
-      background: #FFFFFFfe;
+      background: #FFFFFFf2;
     }.box-scale > #landlord {
       transform: scale(0.7);
     }.box-shadow-wrapper {
