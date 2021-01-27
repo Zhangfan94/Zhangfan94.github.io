@@ -8,7 +8,7 @@
 <meta name="keywords" content="Gridea静态个人博客">
 <meta name="description" content="温故而知新">
 <meta name="theme-color" content="#000">
-<title>关于 | 半生志</title>
+<title>使用RT-Thread Studio + CubeMX开发项目（三）：使用timer做超时检测 | 半生志</title>
 <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/Zhangfan94/Zhangfan94.github.io@master/favicon.ico?v=1611765141017">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zhangfan94/Zhangfan94.github.io@master/media/css/pisces.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zhangfan94/Zhangfan94.github.io@master/media/fonts/font-awesome.css">
@@ -38,8 +38,8 @@
 
 
 
-  <meta name="description" content="关于" />
-  <meta name="keywords" content="" />
+  <meta name="description" content="使用RT-Thread Studio + CubeMX开发项目（三）：使用timer做超时检测" />
+  <meta name="keywords" content="RT-Thread,STM32CubeMX,STM32F103" />
 </head>
 
 <body>
@@ -190,7 +190,8 @@
       <div class="sidebar-body pisces" id="sidebar_body">
         
           
-            
+            <div class="post-side-meta" id="post_side_meta">
+              
 <div class="sidebar-wrapper box-shadow-wrapper bg-color">
   <div class="sidebar-item">
     <img class="site-author-image right-motion" src="https://cdn.jsdelivr.net/gh/Zhangfan94/Zhangfan94.github.io@master/images/avatar.png"/>
@@ -263,6 +264,202 @@
 
 
 </div>
+            </div>
+            <div class="post-toc sidebar-body-active" id="post_toc" style="opacity: 1;">
+              <div class="toc-box right-motion">
+  <div class="toc-wrapper auto-number auto"
+    id="toc_wrapper">
+    <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E7%AC%AC%E4%B8%80%E6%AD%A5-%E5%88%A9%E7%94%A8-rt-thread-studio-%E9%85%8D%E7%BD%AE-timer-%E7%9B%B8%E5%85%B3%E4%BB%A3%E7%A0%81%E6%8E%A5%E7%9D%80-pwm-%E9%A1%B9%E7%9B%AE%E8%BF%9B%E8%A1%8C">第一步、利用 RT-Thread Studio 配置 TIMER 相关代码（接着 PWM 项目进行）</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5-%E5%AE%8C%E5%96%84%E5%AF%B9-pwm-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8F%8A%E6%B5%8B%E8%AF%95%E7%9A%84%E4%BB%A3%E7%A0%81">第二步、完善对 PWM 初始化及测试的代码</a></li>
+<li><a href="#%E7%AC%AC%E4%B8%89%E6%AD%A5-%E7%83%A7%E5%86%99%E5%B9%B6%E6%B5%8B%E8%AF%95">第三步、烧写并测试</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3">参考文档</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+</div>
+
+<script>
+
+  let lastTop = 0, lList = [], hList = [], postBody, lastIndex = -1;
+  let active = 'active-show', activeClass = 'active-current';
+  let tocWrapper = document.querySelector('#toc_wrapper');
+  let tocContent = tocWrapper.children[0];
+  let autoNumber = tocWrapper && tocWrapper.classList.contains('auto-number');
+
+  function addTocNumber(elem, deep) {
+    if (!elem) {
+      return;
+    }
+    let prop = elem.__proto__;
+
+    if (prop === HTMLUListElement.prototype) {
+      for (let i = 0; i < elem.children.length; i++) {
+        addTocNumber(elem.children[i], deep + (i + 1) + '.');
+      }
+    } else if (prop === HTMLLIElement.prototype) {
+      // 保存li元素
+      if (elem.children[0] && elem.children[0].__proto__ === HTMLAnchorElement.prototype) {
+        lList.push(elem);
+      }
+      for (let i = 0; i < elem.children.length; i++) {
+        let cur = elem.children[i];
+        if (cur.__proto__ === HTMLAnchorElement.prototype) {
+          if (autoNumber) {
+            cur.text = deep + ' ' + cur.text;
+          }
+        } else if (cur.__proto__ === HTMLUListElement.prototype) {
+          addTocNumber(cur, deep);
+        }
+      }
+    }
+  }
+
+  function removeParentActiveClass() {
+    let parents = tocContent.querySelectorAll('.' + active)
+    parents.forEach(function (elem) {
+      elem.classList.remove(active);
+    });
+  }
+
+  function addActiveClass(index) {
+    if (index >= 0 && index < hList.length) {
+      lList[index].classList.add(activeClass);
+    }
+  }
+
+  function removeActiveClass(index) {
+    if (index >= 0 && index < hList.length) {
+      lList[index].classList.remove(activeClass);
+    }
+  }
+
+  function addActiveLiElemment(elem, parent) {
+    if (!elem || elem === parent) {
+      return;
+    } else {
+      if (elem.__proto__ === HTMLLIElement.prototype) {
+        elem.classList.add(active);
+      }
+      addActiveLiElemment(elem.parentElement, parent);
+    }
+  }
+
+  function showToc() {
+    if (tocWrapper) {
+      postBody = document.querySelector('#post_body');
+      for (let i = 0; i < postBody.children.length; i++) {
+        if (postBody.children[i].__proto__ === HTMLHeadingElement.prototype) {
+          hList.push(postBody.children[i]);
+        }
+      }
+      if (tocWrapper.classList.contains('compress')) {
+        tocContent.classList.add('closed');
+      } else if (tocWrapper.classList.contains('no_compress')) {
+        tocContent.classList.add('expanded');
+      } else {
+        if (hList.length > 10) {
+          active = 'active-hidden'
+          tocContent.classList.add('closed');
+        } else {
+          tocContent.classList.add('expanded');
+        }
+      }
+    }
+  }
+
+  (function () {
+    // 处理不是从#一级标题开始目录
+    if (tocContent.children.length === 1 && tocContent.children[0].__proto__ === HTMLLIElement.prototype) {
+      let con = tocContent.children[0].children[0];
+      tocContent.innerHTML = con.innerHTML;
+    }
+    let markdownItTOC = document.querySelector('.markdownIt-TOC');
+    let innerHeight = window.innerHeight;
+    markdownItTOC.style = `max-height: ${innerHeight - 80 > 0 ? innerHeight - 80 : innerHeight}px`
+    addTocNumber(tocContent, '');
+  })();
+
+  document.addEventListener('scroll', function (e) {
+    if (lList.length <= 0) {
+      return;
+    }
+    let scrollTop = document.scrollingElement.scrollTop + 10;
+    let dir;
+
+    if (lastTop - scrollTop > 0) {
+      dir = 'up';
+    } else {
+      dir = 'down';
+    }
+
+    lastTop = scrollTop;
+    if (scrollTop <= 0) {
+      if (lastIndex >= 0 && lastIndex < hList.length) {
+        lList[lastIndex].classList.remove(activeClass);
+      }
+      return;
+    }
+
+    let current = 0, hasFind = false;
+    for (let i = 0; i < hList.length; i++) {
+      if (hList[i].offsetTop > scrollTop) {
+        current = i;
+        hasFind = true;
+        break;
+      }
+    }
+    if (!hasFind && scrollTop > lList[lList.length - 1].offsetTop) {
+      current = hList.length - 1;
+    } else {
+      current--;
+    }
+    if (dir === 'down') {
+      if (current > lastIndex) {
+        addActiveClass(current);
+        removeActiveClass(lastIndex)
+        lastIndex = current;
+        removeParentActiveClass();
+        lList[current] && addActiveLiElemment(lList[current].parentElement, tocContent);
+      }
+    } else {
+      if (current < lastIndex) {
+        addActiveClass(current);
+        removeActiveClass(lastIndex);
+        lastIndex = current;
+        removeParentActiveClass();
+        lList[current] && addActiveLiElemment(lList[current].parentElement, tocContent);
+      }
+    }
+  });
+
+
+  window.addEventListener('load', function () {
+    showToc();
+    document.querySelector('#sidebar').style = 'display: block;';
+    tocWrapper.classList.add('toc-active');
+    setTimeout(function () {
+      if ("createEvent" in document) {
+        let evt = document.createEvent("HTMLEvents");
+        evt.initEvent("scroll", false, true);
+        document.dispatchEvent(evt);
+      }
+      else {
+        document.fireEvent("scroll");
+      }
+    }, 500)
+  })
+
+</script>
+            </div>
           
         
       </div>
@@ -350,8 +547,8 @@
           <div class="section bg-color post post-page">
             <section class="post-header">
   <h1 class="post-title">
-    <a class="post-title-link" href="https://Zhangfan94.github.io/post/about/">
-      关于
+    <a class="post-title-link" href="https://Zhangfan94.github.io/post/shi-yong-rt-thread-studio-cubemx-kai-fa-xiang-mu-san-shi-yong-timer-zuo-chao-shi-jian-ce/">
+      使用RT-Thread Studio + CubeMX开发项目（三）：使用timer做超时检测
     </a>
   </h1>
   <div class="post-meta">
@@ -359,23 +556,48 @@
     <span class="meta-item pc-show">
       <i class="fa fa-calendar-o"></i>
       <span class="language" data-lan="publish">发布于</span>
-      <span class="publish-time" data-t="2019-01-25 19:09:48">2019-01-25</span>
+      <span class="publish-time" data-t="2021-01-28 00:03:14">2021-01-28</span>
       <span class="post-meta-divider pc-show">|</span>
     </span>
     
     <span class="meta-item">
+      <i class="fa fa-folder-o"></i>
+      <span class="pc-show language" data-lan="category-in">分类于</span>
+      
+      
+      <a href="https://Zhangfan94.github.io/tag/BpDUlhoEk/">
+        <span>RT-Thread</span>
+      </a>、
+      
+      
+      
+      <a href="https://Zhangfan94.github.io/tag/xd4IWLQ9A/">
+        <span>STM32CubeMX</span>
+      </a>、
+      
+      
+      
+      <a href="https://Zhangfan94.github.io/tag/v5g7o3pTq/">
+        <span>STM32F103</span>
+      </a>
+      
+      
+    </span>
+    <span class="post-meta-divider">|</span>
+    
+    <span class="meta-item">
       <i class="fa fa-clock-o"></i>
-      <span>1<span class="language" data-lan="minute">分钟</span></span>
+      <span>7<span class="language" data-lan="minute">分钟</span></span>
     </span>
     <span class="meta-item">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-file-word-o"></i>
-      <span>15<span class="pc-show language" data-lan="words">字数</span></span>
+      <span>1269<span class="pc-show language" data-lan="words">字数</span></span>
     </span>
     
     
     
-    <span id="/post/about/" data-flag-title="关于" class="meta-item pc-show leancloud_visitors">
+    <span id="/post/shi-yong-rt-thread-studio-cubemx-kai-fa-xiang-mu-san-shi-yong-timer-zuo-chao-shi-jian-ce/" data-flag-title="使用RT-Thread Studio + CubeMX开发项目（三）：使用timer做超时检测" class="meta-item pc-show leancloud_visitors">
       <span class="post-meta-divider">|</span>
       <i class="fa fa-eye"></i>
       <span><span class="language" data-lan="view">浏览量</span>：<span class="leancloud-visitors-count"></span></span>
@@ -384,12 +606,367 @@
   </div>
 </section>
             <div class="post-body next-md-body" id="post_body">
-              <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
+              <p>摘要：接着PWM之后，本文将继续增加 Timer，用来做串口数据的分包。</p>
+<!-- more -->
+<h3 id="第一步-利用-rt-thread-studio-配置-timer-相关代码接着-pwm-项目进行">第一步、利用 RT-Thread Studio 配置 TIMER 相关代码（接着 PWM 项目进行）</h3>
+<p>首先在 board.h 中官方给出了如何在 rtt 中使用 HWTIMER。</p>
+<figure data-type="image" tabindex="1"><img src="https://Zhangfan94.github.io/post-images/1611763585341.png" alt="" loading="lazy"></figure>
+<ul>
+<li>STEP 1：RT-Thread Settings 中打开 hwtimer 驱动支持。</li>
+</ul>
+<figure data-type="image" tabindex="2"><img src="https://Zhangfan94.github.io/post-images/1611763621192.png" alt="" loading="lazy"></figure>
+<ul>
+<li>
+<p>STEP 2：在 board.h 中定义相关宏，这里注意 “BSP_USING_PWM1_CH1 ”，这个也是需要的，可以看。</p>
+<pre><code class="language-cpp">/** if you want to use hardware timer you can use the following instructions.
+ *
+ * STEP 1, open hwtimer driver framework support in the RT-Thread Settings file
+ *
+ * STEP 2, define macro related to the hwtimer
+ *                 such as     #define BSP_USING_TIM  and
+ *                             #define BSP_USING_TIM1
+ *
+ * STEP 3, copy your hardwire timer init function from stm32xxxx_hal_msp.c generated by stm32cubemx to the end of board.c file
+ *                 such as     void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
+ *
+ * STEP 4, modify your stm32xxxx_hal_config.h file to support hardwere timer peripherals. define macro related to the peripherals
+ *                 such as     #define HAL_TIM_MODULE_ENABLED
+ *
+ */
+
+#define BSP_USING_TIM
+#ifdef BSP_USING_TIM
+#define BSP_USING_TIM2
+/*#define BSP_USING_TIM16*/
+/*#define BSP_USING_TIM17*/
+#endif
+</code></pre>
+</li>
+<li>
+<p>STEP 3：使用 cubemx 生成 hwtimer 的初始化相关代码 HAL_TIM_Base_MspInit (只需要修改红色标记就可以，其他的我们使用 rtt 中提供的 API 来修改就好，timer_init 会处理。)，并拷贝 HAL_TIM_Base_MspInit 到 board.c 中。</p>
+</li>
+</ul>
+<figure data-type="image" tabindex="3"><img src="https://Zhangfan94.github.io/post-images/1611763639093.png" alt="" loading="lazy"></figure>
+<pre><code class="language-cpp">/* 主要是下边的函数中对定时器的设置 */
+static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
+{
+    uint32_t prescaler_value = 0;
+    TIM_HandleTypeDef *tim = RT_NULL;
+    struct stm32_hwtimer *tim_device = RT_NULL;
+
+    RT_ASSERT(timer != RT_NULL);
+    if (state)
+    {
+        tim = (TIM_HandleTypeDef *)timer-&gt;parent.user_data;
+        tim_device = (struct stm32_hwtimer *)timer;
+
+        /* time init */
+			
+				... ...
+       
+        if (HAL_TIM_Base_Init(tim) != HAL_OK)
+        {
+            LOG_E(&quot;%s init failed&quot;, tim_device-&gt;name);
+            return;
+        }
+        else
+        {
+            /* set the TIMx priority */
+            HAL_NVIC_SetPriority(tim_device-&gt;tim_irqn, 3, 0);
+
+            /* enable the TIMx global Interrupt */
+            HAL_NVIC_EnableIRQ(tim_device-&gt;tim_irqn);
+
+            /* clear update flag */
+            __HAL_TIM_CLEAR_FLAG(tim, TIM_FLAG_UPDATE);
+            /* enable update request source */
+            __HAL_TIM_URS_ENABLE(tim);
+
+            LOG_D(&quot;%s init success&quot;, tim_device-&gt;name);
+        }
+    }
+}
+</code></pre>
+<pre><code class="language-cpp">/**
+* @brief TIM_Base MSP Initialization
+* This function configures the hardware resources used in this example
+* @param htim_base: TIM_Base handle pointer
+* @retval None
+*/
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
+{
+  if(htim_base-&gt;Instance==TIM1)
+  {
+  /* USER CODE BEGIN TIM1_MspInit 0 */
+
+  /* USER CODE END TIM1_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_TIM1_CLK_ENABLE();
+  /* USER CODE BEGIN TIM1_MspInit 1 */
+
+  /* USER CODE END TIM1_MspInit 1 */
+  }
+  else if(htim_base-&gt;Instance==TIM2)
+  {
+  /* USER CODE BEGIN TIM2_MspInit 0 */
+
+  /* USER CODE END TIM2_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_TIM2_CLK_ENABLE();
+  /* USER CODE BEGIN TIM2_MspInit 1 */
+
+  /* USER CODE END TIM2_MspInit 1 */
+  }
+
+}
+</code></pre>
+<ul>
+<li>STEP 4：修改 stm32xxxx_hal_config.h 文件，打开 HAL 对相关功能的支持。</li>
+</ul>
+<figure data-type="image" tabindex="4"><img src="https://Zhangfan94.github.io/post-images/1611763651288.png" alt="" loading="lazy"></figure>
+<h3 id="第二步-完善对-pwm-初始化及测试的代码">第二步、完善对 PWM 初始化及测试的代码</h3>
+<p>RTT 定时器设备使用流程：</p>
+<ol>
+<li>以读写方式打开设备</li>
+<li>设置超时回调函数（如果需要）</li>
+<li>根据需要设置定时模式（单次/周期）</li>
+<li>设置计数频率（可选）</li>
+<li>写入超时值，定时器随即启动</li>
+<li>停止定时器（可选）</li>
+<li>关闭设备（如果需要）</li>
+</ol>
+<p>创建路径 “RttDemo\applications\service\timer” 并创建文件 “Timer2.h” “Timer2.c”。</p>
+<ul>
+<li>
+<p>“Timer2.h” 内容如下：</p>
+<pre><code class="language-cpp">/*
+ * Copyright (c) 2006-2020, Linfeng Electronic Technology Co., Ltd
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020-10-23     ZhangFan     first version
+ */
+
+#ifndef _TIMER_2_H_
+#define _TIMER_2_H_
+
+#include &lt;rtdevice.h&gt;
+
+typedef rt_err_t (*timeoutfunc)(rt_uint32_t cnt);
+
+rt_bool_t timer2_init();
+
+/* 超时事件注册器，注：事件函数中不应该有耗时操作 */
+rt_bool_t timer2_timeout_event_register(timeoutfunc func);
+
+#endif //_TIMER_2_H_
+</code></pre>
+</li>
+<li>
+<p>“Timer2.c” 内容如下：</p>
+<pre><code class="language-cpp">#include &quot;Timer2.h&quot;
+#include &lt;string.h&gt;
+
+/* log */
+#define DBG_TAG    &quot;Timer2&quot;
+#define DBG_LVL    DBG_LOG
+#include &lt;rtdbg.h&gt;
+
+#define HWTIMER_DEV_NAME   &quot;timer2&quot;                             /* 定时器名称 */
+
+#define FUNC_MAX_COUNT 10
+typedef struct _timeoutfunclist
+{
+    timeoutfunc timeoutfuncs[FUNC_MAX_COUNT];                   /* 超时函数列表 */
+    rt_int8_t count;                                            /* 超时函数列表实际个数 */
+}timeoutfunclist;
+
+rt_device_t hw_dev = RT_NULL;                                   /* 定时器设备句柄 */
+rt_int32_t timerticks = 0;                                      /* 定时计数器 */
+timeoutfunclist funclist;                                       /* 超时回调函数列表 */
+
+/* 定时器超时回调函数 */
+static rt_err_t timeout_cb(rt_device_t dev, rt_size_t size)
+{
+    timerticks++;
+
+    for(rt_int8_t i = 0; i &lt; funclist.count; i++)
+    {
+        funclist.timeoutfuncs[funclist.count](timerticks);
+    }
+
+    return 0;
+}
+
+/* 设置定时器特性 */
+static rt_bool_t timer2_default_set()
+{
+    rt_err_t ret = RT_EOK;
+    rt_hwtimerval_t timeout_s;              /* 定时器超时值 */
+    rt_hwtimer_mode_t mode;                 /* 定时器模式 */
+
+    /* 设置模式为周期性定时器 */
+    mode = HWTIMER_MODE_PERIOD;
+    ret = rt_device_control(hw_dev, HWTIMER_CTRL_MODE_SET, &amp;mode);
+    if (ret != RT_EOK)
+    {
+        LOG_D(&quot;set mode failed! ret is :%d\n&quot;, ret);
+        return ret;
+    }
+
+    /* 设置定时器超时值为5s并启动定时器 */
+    timeout_s.sec = 0;      /* 秒 */
+    timeout_s.usec = 2 * 100000;     /* 微秒 */
+    if (rt_device_write(hw_dev, 0, &amp;timeout_s, sizeof(timeout_s))
+            != sizeof(timeout_s))
+    {
+        LOG_D(&quot;set timeout value failed\n&quot;);
+        return RT_ERROR;
+    }
+
+    /* 延时3500ms */
+    rt_thread_mdelay(3500);
+
+    /* 读取定时器当前值 */
+    rt_device_read(hw_dev, 0, &amp;timeout_s, sizeof(timeout_s));
+
+    LOG_D(&quot;Read: Sec = %d, Usec = %d\n&quot;, timeout_s.sec, timeout_s.usec);
+
+    return RT_TRUE;
+}
+
+rt_bool_t timer2_init()
+{
+    rt_err_t ret = RT_EOK;
+    memset(&amp;funclist, 0, sizeof(funclist));
+
+    /* 查找定时器设备 */
+    hw_dev = rt_device_find(HWTIMER_DEV_NAME);
+    if (hw_dev == RT_NULL)
+    {
+        LOG_D(&quot;hwtimer sample run failed! can't find %s device!\n&quot;,
+                HWTIMER_DEV_NAME);
+        return RT_FALSE;
+    }
+
+    /* 以读写方式打开设备 */
+    ret = rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
+    if (ret != RT_EOK)
+    {
+        LOG_D(&quot;open %s device failed!\n&quot;, HWTIMER_DEV_NAME);
+        return RT_FALSE;
+    }
+
+    /* 设置超时回调函数 */
+    ret = rt_device_set_rx_indicate(hw_dev, timeout_cb);
+    if (ret != RT_EOK)
+    {
+        LOG_D(&quot;%s set timeout callback failed!\n&quot;, HWTIMER_DEV_NAME);
+        return RT_FALSE;
+    }
+
+    /* 定时器默认设置 */
+    if(!timer2_default_set())
+    {
+        LOG_D(&quot;%s set failed!\n&quot;, HWTIMER_DEV_NAME);
+        return RT_FALSE;
+    }
+
+    return RT_TRUE;
+}
+
+/* 超时事件注册器，注：事件函数中不应该有耗时操作 */
+rt_bool_t timer2_timeout_event_register(timeoutfunc func)
+{
+    if(funclist.count &gt;= FUNC_MAX_COUNT)
+    {
+        return RT_FALSE;
+    }
+
+    funclist.timeoutfuncs[funclist.count] = func;
+    funclist.count++;
+
+    return RT_TRUE;
+}
+</code></pre>
+</li>
+<li>
+<p>“main.c”函数内容：</p>
+<pre><code class="language-cpp">#include &lt;rtthread.h&gt;
+
+#define DBG_TAG &quot;main&quot;
+#define DBG_LVL DBG_LOG
+#include &lt;rtdbg.h&gt;
+
+#include &quot;SerialUart2.h&quot;
+#include &quot;PwmChanel1.h&quot;
+#include &quot;Timer2.h&quot;
+
+int main(void)
+{
+    int count = 1;
+
+    serial2_init(); /* 串口2初始化 */
+    pwm_ch1_init(); /* PWM 初始化 */
+    timer2_init();  /* TIMER初始化 */
+
+    while (count++)
+    {
+        //LOG_D(&quot;Hello RT-Thread!&quot;);
+        serial2_write(&quot;Hello RT-Thread!\r\n&quot;, sizeof(&quot;Hello RT-Thread!\r\n&quot;) - 1);
+        rt_thread_mdelay(1000);
+    }
+
+    return RT_EOK;
+}
+</code></pre>
+</li>
+</ul>
+<h3 id="第三步-烧写并测试">第三步、烧写并测试</h3>
+<p>定时器回调函数被触发，证明程序工作正常，后边我们只需要通过 “timer2_timeout_event_register” 函数注册用户自己的定时任务就可以，这里写的比较简单，因为我这边主要后期用于检测 uart 接收超时分包。</p>
+<h3 id="参考文档">参考文档</h3>
+<p><a href="https://www.rt-thread.org/document/site/programming-manual/device/hwtimer/hwtimer/#">HWTIMER设备 - RT-Thread 文档中心</a></p>
 
             </div>
             
+            
+              <div class="post-footer">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong class="language" data-lan="author">本文作者：</strong>
+      Oscar
+    </li>
+    <li class="post-copyright-link">
+      <strong class="language" data-lan="link">本文链接：</strong>
+      <a href="https://Zhangfan94.github.io/post/shi-yong-rt-thread-studio-cubemx-kai-fa-xiang-mu-san-shi-yong-timer-zuo-chao-shi-jian-ce/" title="使用RT-Thread Studio + CubeMX开发项目（三）：使用timer做超时检测">https://Zhangfan94.github.io/post/shi-yong-rt-thread-studio-cubemx-kai-fa-xiang-mu-san-shi-yong-timer-zuo-chao-shi-jian-ce/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong class="language" data-lan="copyright">版权声明： </strong>
+      本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+  <div class="tags">
+    
+      <a href="https://Zhangfan94.github.io/tag/BpDUlhoEk/"># RT-Thread</a>
+    
+      <a href="https://Zhangfan94.github.io/tag/xd4IWLQ9A/"># STM32CubeMX</a>
+    
+      <a href="https://Zhangfan94.github.io/tag/v5g7o3pTq/"># STM32F103</a>
+    
+  </div>
+  <div class="nav">
+    <div class="nav-prev">
+      
+    </div>
+    <div class="nav-next">
+      
+        <a class="nav-pc-next" title="使用RT-Thread Studio + CubeMX开发项目（二）：使用pwm" href="https://Zhangfan94.github.io/post/shi-yong-rt-thread-studio-cubemx-kai-fa-xiang-mu-er-shi-yong-pwm/">使用RT-Thread Studio + CubeMX开发项目（二）：使用pwm</a>
+        <a class="nav-mobile-next" title="使用RT-Thread Studio + CubeMX开发项目（二）：使用pwm" href="https://Zhangfan94.github.io/post/shi-yong-rt-thread-studio-cubemx-kai-fa-xiang-mu-er-shi-yong-pwm/">下一篇</a>
+        <i class="fa fa-chevron-right"></i>
+      
+    </div>
+  </div>
+</div>
             
             
   <script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
